@@ -78,6 +78,7 @@ export default function SaaSLandingPage({
   // FAQ Accordion State
   const [openFaq, setOpenFaq] = useState(null);
   const [phoneScreen, setPhoneScreen] = useState(0); // 0=Kasir, 1=Kurir, 2=Owner
+  const [activeWorkflowStep, setActiveWorkflowStep] = useState(0); // 0=Book App, 1=Wash Cycle, 2=Steam Iron, 3=Fresh Folded
 
   // Auto-cycle phone screen every 3 seconds
   useEffect(() => {
@@ -85,6 +86,14 @@ export default function SaaSLandingPage({
       setPhoneScreen(prev => (prev + 1) % 3);
     }, 3000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Auto-cycle workflow step every 4 seconds
+  useEffect(() => {
+    const wTimer = setInterval(() => {
+      setActiveWorkflowStep(prev => (prev + 1) % 4);
+    }, 4000);
+    return () => clearInterval(wTimer);
   }, []);
 
   // Form State
@@ -1949,56 +1958,317 @@ export default function SaaSLandingPage({
             </p>
           </div>
 
-          {/* Workflow 3D Image Banner */}
-          <div className="rounded-3xl border border-slate-200/80 dark:border-slate-800 overflow-hidden shadow-soft-lg">
-            <img 
-              src="/images/laundry_workflow.jpg" 
-              alt="4 Langkah Alur Laundry 3D" 
-              className="w-full h-auto object-cover"
-            />
+          {/* Step Timeline Indicator */}
+          <div className="flex items-center justify-between gap-2 max-w-4xl mx-auto px-4 overflow-x-auto no-scrollbar">
+            {[
+              { id: 0, title: '1. Book App & Order In', icon: '📱' },
+              { id: 1, title: '2. Wash Cycle & IoT', icon: '🧼' },
+              { id: 2, title: '3. Steam Iron & Audit', icon: '♨️' },
+              { id: 3, title: '4. Fresh Folded & Delivery', icon: '🛵' }
+            ].map((stepItem, idx) => (
+              <React.Fragment key={stepItem.id}>
+                <button
+                  onClick={() => setActiveWorkflowStep(stepItem.id)}
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-black transition-all flex-shrink-0 border ${
+                    activeWorkflowStep === stepItem.id
+                      ? 'bg-primary text-white border-primary shadow-clay-sm scale-105'
+                      : isDark
+                        ? 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
+                        : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 shadow-xs'
+                  }`}
+                >
+                  <span className="text-base">{stepItem.icon}</span>
+                  <span>{stepItem.title}</span>
+                </button>
+                {idx < 3 && (
+                  <div className={`hidden sm:block flex-1 h-1 rounded-full overflow-hidden ${
+                    isDark ? 'bg-slate-800' : 'bg-slate-200'
+                  }`}>
+                    <div 
+                      className="h-full bg-primary transition-all duration-500" 
+                      style={{ width: activeWorkflowStep > idx ? '100%' : activeWorkflowStep === idx ? '60%' : '0%' }}
+                    ></div>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
           </div>
 
-          {/* 4 Steps Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                step: '1',
-                title: 'Order Masuk & Timbang',
-                desc: 'Pelanggan pesan lewat aplikasi atau kasir input kiloan/satuan dengan kalkulator hitung otomatis.',
-                icon: '📱'
-              },
-              {
-                step: '2',
-                title: 'Cuci & IoT Monitor',
-                desc: 'Mesin cuci terhubung sensor IoT. Takaran deterjen pas & timer drum terpantau tanpa cucian gelap.',
-                icon: '🧼'
-              },
-              {
-                step: '3',
-                title: 'Setrika & Foto Audit',
-                desc: 'Pakaian disetrika rapi dan difoto kondisi sebelum/sesudah cuci untuk garansi zero komplain.',
-                icon: '♨️'
-              },
-              {
-                step: '4',
-                title: 'Kurir Antar & Nota WA',
-                desc: 'Kurir antar pakaian dengan navigasi Google Maps. Nota digital otomatis terkirim via WhatsApp.',
-                icon: '🛵'
-              },
-            ].map((st) => (
-              <div key={st.step} className={`p-6 rounded-3xl border space-y-3 relative ${
-                isDark ? 'bg-slate-900 border-slate-800' : 'bg-slate-50/80 border-slate-200 shadow-xs'
-              }`}>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">{st.icon}</span>
-                  <span className="w-8 h-8 rounded-full bg-primary/10 text-primary font-black text-sm flex items-center justify-center border border-primary/20">
-                    {st.step}
-                  </span>
-                </div>
-                <h3 className={`text-base font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>{st.title}</h3>
-                <p className={`text-xs font-semibold leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{st.desc}</p>
+          {/* MAIN INTERACTIVE WORKFLOW STAGE SHOWCASE CANVAS */}
+          <div className={`relative rounded-3xl border p-6 sm:p-10 shadow-2xl overflow-hidden backdrop-blur-xl transition-all duration-500 ${
+            isDark ? 'bg-slate-900/90 border-slate-800 text-white' : 'bg-white/95 border-slate-200 shadow-slate-300/40 text-slate-900'
+          }`}>
+
+            {/* Ambient Background Backlight Glow */}
+            <div className={`absolute -top-10 -right-10 w-96 h-96 rounded-full blur-3xl -z-10 transition-all ${
+              activeWorkflowStep === 0 ? 'bg-sky-500/20' : activeWorkflowStep === 1 ? 'bg-emerald-500/20' : activeWorkflowStep === 2 ? 'bg-amber-500/20' : 'bg-indigo-500/20'
+            }`}></div>
+
+            <div className="grid md:grid-cols-12 gap-8 items-center">
+
+              {/* LEFT: Live Stage Interactive Animation Display (7 Cols) */}
+              <div className="md:col-span-7 space-y-4">
+                
+                {/* STAGE 0: BOOK APP & ORDER IN */}
+                {activeWorkflowStep === 0 && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                        TAHAP 1: ORDER BOOKING & PENERIMAAN
+                      </span>
+                      <span className="text-xs font-black text-emerald-500 flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                        Order Masuk Instant
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                      Order Masuk Otomatis via App Pelanggan & POS Kasir
+                    </h3>
+
+                    {/* Interactive UI Card */}
+                    <div className="p-4 rounded-2xl border border-sky-200 dark:border-sky-900/50 bg-sky-50/50 dark:bg-sky-950/20 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-sky-500 text-white font-black flex items-center justify-center text-lg shadow-sm">
+                            📱
+                          </div>
+                          <div>
+                            <p className="text-xs font-black">Order #INV-2026-982</p>
+                            <p className="text-[11px] text-slate-500 font-bold">Aisyah Salsabila · Surabaya</p>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 text-[10px] font-black rounded-lg bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          ✓ Lunas via QRIS
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs font-bold pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                        <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border">
+                          <span className="text-[10px] text-slate-400">Layanan</span>
+                          <p className="font-black text-primary">Cuci Lipat Express</p>
+                        </div>
+                        <div className="p-2 rounded-xl bg-white dark:bg-slate-900 border">
+                          <span className="text-[10px] text-slate-400">Berat Cucian</span>
+                          <p className="font-black text-emerald-600">4.5 Kg (Rp 45.000)</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs font-semibold text-slate-500 leading-relaxed">
+                      Sistem kasir langsung mengkalkulasi berat, mencetak tag pakaian anti-air, dan mengirimkan notifikasi konfirmasi ke WhatsApp pelanggan tanpa perlu dicatat manual.
+                    </p>
+                  </div>
+                )}
+
+                {/* STAGE 1: WASH CYCLE & IOT */}
+                {activeWorkflowStep === 1 && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                        TAHAP 2: PROSES CUCI & MONITORING IOT
+                      </span>
+                      <span className="text-xs font-black text-sky-500 flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-sky-500 animate-spin"></span>
+                        Drum Spin 1200 RPM
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                      Pencucian Higienis Terkontrol Sensor IoT
+                    </h3>
+
+                    {/* Interactive Washer Display */}
+                    <div className="p-4 rounded-2xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-emerald-500 text-white font-black flex items-center justify-center text-lg shadow-sm animate-spin">
+                            🌀
+                          </div>
+                          <div>
+                            <p className="text-xs font-black">Maytag Commercial Washer #02</p>
+                            <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">Status: Active Wash & Spin Cycle</p>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 text-[10px] font-black rounded-lg bg-sky-500/10 text-sky-600 border border-sky-500/20">
+                          Temp: 45°C
+                        </span>
+                      </div>
+
+                      {/* Progress Bar */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[11px] font-black">
+                          <span>Progress Siklus Cuci</span>
+                          <span className="text-primary">Sisa 12 Menit</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                          <div className="bg-gradient-to-r from-emerald-400 via-sky-400 to-primary h-full rounded-full w-[65%] animate-pulse"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-xs font-semibold text-slate-500 leading-relaxed">
+                      Penggunaan deterjen diinjeksikan secara tepat via pompa otomatis. Pemilik laundry dapat memantau putaran drum dan jam operasional mesin langsung dari HP.
+                    </p>
+                  </div>
+                )}
+
+                {/* STAGE 2: STEAM IRON & AUDIT */}
+                {activeWorkflowStep === 2 && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                        TAHAP 3: SETRIKA UAP & FOTO AUDIT GARMENT
+                      </span>
+                      <span className="text-xs font-black text-amber-500 flex items-center gap-1">
+                        <span>♨️</span>
+                        Steam Temp 140°C
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                      Setrika Rapi Licin & Audit Foto Sebelum Di-Packing
+                    </h3>
+
+                    {/* Interactive Ironing Card */}
+                    <div className="p-4 rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white font-black flex items-center justify-center text-lg shadow-sm">
+                            ♨️
+                          </div>
+                          <div>
+                            <p className="text-xs font-black">Finishing & Packing Premium</p>
+                            <p className="text-[11px] text-amber-700 dark:text-amber-400 font-bold">Parfum: Sakura Blossom</p>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 text-[10px] font-black rounded-lg bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                          🏷️ RAK A-14
+                        </span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border flex items-center justify-between text-xs font-bold">
+                        <div className="flex items-center gap-2">
+                          <span className="text-base">📸</span>
+                          <span>Garansi Zero Defect (Foto Audit Garment Ter-Upload)</span>
+                        </div>
+                        <span className="text-emerald-500 font-black">✓ Verifikasi OK</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs font-semibold text-slate-500 leading-relaxed">
+                      Pakaian disetrika rapi, disemprot parfum tahan lama, lalu difoto oleh staf sebelum dibungkus. Konsumen dapat melihat foto kondisi pakaian mereka langsung di aplikasi.
+                    </p>
+                  </div>
+                )}
+
+                {/* STAGE 3: FRESH FOLDED & DELIVERY */}
+                {activeWorkflowStep === 3 && (
+                  <div className="space-y-4 animate-fade-in">
+                    <div className="flex items-center justify-between">
+                      <span className="px-3 py-1 rounded-full text-xs font-black bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                        TAHAP 4: PENGANTARAN KURIR & NOTA WA
+                      </span>
+                      <span className="text-xs font-black text-indigo-500 flex items-center gap-1">
+                        <span>🛵</span>
+                        Kurir Live Tracking
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                      Pengantaran Kurir Lacak GPS & WA Otomatis
+                    </h3>
+
+                    {/* Interactive Delivery Display */}
+                    <div className="p-4 rounded-2xl border border-indigo-200 dark:border-indigo-900/50 bg-indigo-50/50 dark:bg-indigo-950/20 space-y-3">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white font-black flex items-center justify-center text-lg shadow-sm">
+                            🛵
+                          </div>
+                          <div>
+                            <p className="text-xs font-black">Doni Pratama (Kurir Smart)</p>
+                            <p className="text-[11px] text-indigo-600 dark:text-indigo-400 font-bold">ETA ~6 Menit (Jl. Melati No. 42)</p>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 text-[10px] font-black rounded-lg bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                          💬 WA Terkirim
+                        </span>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border flex items-center justify-between text-xs font-bold">
+                        <span className="text-slate-600 dark:text-slate-300">Rating Konsumen:</span>
+                        <span className="text-amber-500 font-black">⭐ 5.0 (Sangat Memuaskan!)</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs font-semibold text-slate-500 leading-relaxed">
+                      Kurir mengantar paket ke rumah pelanggan dengan rute teroptimasi GPS. Konsumen menerima notifikasi WA otomatis lengkap dengan link nota dan lokasi kurir.
+                    </p>
+                  </div>
+                )}
               </div>
-            ))}
+
+              {/* RIGHT: High-Impact Visual Card Preview (5 Cols) */}
+              <div className="md:col-span-5 flex flex-col items-center justify-center">
+                <div className={`w-full p-6 rounded-3xl border shadow-xl text-center space-y-4 transition-all duration-300 ${
+                  isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  {/* Big Animated Icon Stage */}
+                  <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-sky-400 via-primary to-indigo-600 text-white flex items-center justify-center text-4xl shadow-clay-lg animate-hero-float">
+                    {['📱', '🌀', '♨️', '🛵'][activeWorkflowStep]}
+                  </div>
+
+                  <div>
+                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">Alur Otomatis #{activeWorkflowStep + 1}</span>
+                    <h4 className="text-base font-black mt-1">
+                      {['Penerimaan & POS', 'Siklus Cuci IoT', 'Finishing & Audit', 'Antar & WA Digital'][activeWorkflowStep]}
+                    </h4>
+                  </div>
+
+                  {/* Feature Highlights List */}
+                  <div className="space-y-2 text-left pt-2 border-t border-slate-200/60 dark:border-slate-800 text-xs">
+                    {activeWorkflowStep === 0 && [
+                      '✓ Kalkulasi harga otomatis per kg / satuan',
+                      '✓ Tag pakaian anti-air luntur otomatis ter-print',
+                      '✓ Pembayaran QRIS & Cash langsung masuk pembukuan'
+                    ].map((f, i) => <p key={i} className="font-bold text-slate-600 dark:text-slate-300">{f}</p>)}
+
+                    {activeWorkflowStep === 1 && [
+                      '✓ Sensor IoT membaca sisa menit & putaran RPM',
+                      '✓ Pompa deterjen otomatis takar dosis tepat',
+                      '✓ Notifikasi otomatis jika siklus cuci selesai'
+                    ].map((f, i) => <p key={i} className="font-bold text-slate-600 dark:text-slate-300">{f}</p>)}
+
+                    {activeWorkflowStep === 2 && [
+                      '✓ Setrika uap tekanan tinggi bebas risiko gosong',
+                      '✓ Foto audit kondisi baju di-upload ke database',
+                      '✓ Penataan rak tersistem dengan barcode tag'
+                    ].map((f, i) => <p key={i} className="font-bold text-slate-600 dark:text-slate-300">{f}</p>)}
+
+                    {activeWorkflowStep === 3 && [
+                      '✓ Radar GPS lacak kurir real-time dari HP',
+                      '✓ Nota WA terkirim otomatis tanpa simpan nomor',
+                      '✓ Konsumen bisa beri rating & ulasan bintang'
+                    ].map((f, i) => <p key={i} className="font-bold text-slate-600 dark:text-slate-300">{f}</p>)}
+                  </div>
+
+                  {/* Step Selector Dots */}
+                  <div className="flex justify-center gap-2 pt-2">
+                    {[0, 1, 2, 3].map((stepIdx) => (
+                      <button
+                        key={stepIdx}
+                        onClick={() => setActiveWorkflowStep(stepIdx)}
+                        className={`h-2.5 rounded-full transition-all ${
+                          activeWorkflowStep === stepIdx ? 'w-8 bg-primary' : 'w-2.5 bg-slate-300 dark:bg-slate-700'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
       </section>
