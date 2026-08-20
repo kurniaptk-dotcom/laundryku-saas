@@ -1,0 +1,433 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #f8fafc;
+    overflow-x: hidden;
+    touch-action: manipulation;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Claymorphic 3D Style Utility */
+.clay-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 
+    0 10px 25px -5px rgba(2, 132, 199, 0.05),
+    0 8px 10px -6px rgba(2, 132, 199, 0.05),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -2px 4px 0 rgba(15, 23, 42, 0.03);
+}
+
+.clay-button {
+  background: linear-gradient(135deg, #0284c7 0%, #0070f3 100%);
+  box-shadow: 
+    0 10px 15px -3px rgba(2, 132, 199, 0.3),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px 0 rgba(0, 0, 0, 0.15);
+}
+
+.clay-button:active {
+  transform: scale(0.98);
+  box-shadow: 
+    0 4px 6px -1px rgba(2, 132, 199, 0.2),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.clay-icon-bg {
+  box-shadow: 
+    0 6px 12px -2px rgba(2, 132, 199, 0.1),
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px 0 rgba(2, 132, 199, 0.05);
+}
+
+/* Enhanced Realistic Animations for Washing Machine Simulator */
+@keyframes wash-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes wash-spin-reverse {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes clothes-tumble {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  25% { transform: translate(15px, -20px) rotate(45deg) scale(1.05); }
+  50% { transform: translate(0px, -35px) rotate(180deg) scale(0.95); }
+  75% { transform: translate(-20px, -15px) rotate(270deg) scale(1.02); }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+}
+
+@keyframes clothes-tumble-alt {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(-18px, -25px) rotate(-90deg) scale(0.9); }
+  60% { transform: translate(20px, -15px) rotate(-220deg) scale(1.1); }
+  100% { transform: translate(0, 0) rotate(-360deg); }
+}
+
+@keyframes water-slosh {
+  0%, 100% { transform: translateY(0) scaleY(1) rotate(0deg); }
+  25% { transform: translateY(-6px) scaleY(1.1) rotate(3deg); }
+  50% { transform: translateY(-2px) scaleY(0.95) rotate(-2deg); }
+  75% { transform: translateY(-8px) scaleY(1.05) rotate(2deg); }
+}
+
+@keyframes bubble-rise {
+  0% { transform: translateY(15px) scale(0.4); opacity: 0; }
+  50% { opacity: 0.9; }
+  100% { transform: translateY(-65px) scale(1.2); opacity: 0; }
+}
+
+@keyframes washer-vibrate {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-0.8px, 0.6px); }
+  40% { transform: translate(0.8px, -0.6px); }
+  60% { transform: translate(-0.5px, -0.4px); }
+  80% { transform: translate(0.5px, 0.4px); }
+}
+
+@keyframes steam-drift {
+  0% { transform: translateY(0) scale(0.8); opacity: 0.2; }
+  50% { opacity: 0.7; }
+  100% { transform: translateY(-30px) scale(1.3); opacity: 0; }
+}
+
+.animate-wash-spin {
+  animation: wash-spin 2s linear infinite;
+}
+
+.animate-wash-spin-fast {
+  animation: wash-spin 0.6s linear infinite;
+}
+
+.animate-wash-spin-turbo {
+  animation: wash-spin 0.35s linear infinite;
+}
+
+.animate-clothes-tumble {
+  animation: clothes-tumble 1.8s ease-in-out infinite;
+}
+
+.animate-clothes-tumble-fast {
+  animation: clothes-tumble 0.9s ease-in-out infinite;
+}
+
+.animate-clothes-tumble-alt {
+  animation: clothes-tumble-alt 2.2s ease-in-out infinite;
+}
+
+.animate-water-slosh {
+  animation: water-slosh 2s ease-in-out infinite;
+}
+
+.animate-washer-vibrate {
+  animation: washer-vibrate 0.08s linear infinite;
+}
+
+.animate-steam {
+  animation: steam-drift 2.5s ease-out infinite;
+}
+
+.animate-bubble-1 {
+  animation: bubble-rise 2s infinite ease-in;
+}
+
+.animate-bubble-2 {
+  animation: bubble-rise 2.8s infinite ease-in 0.6s;
+}
+
+.animate-bubble-3 {
+  animation: bubble-rise 2.2s infinite ease-in 1.2s;
+}
+
+
+/* Hide Scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide Scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Glassmorphic elements */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(8px) rotate(-1deg);
+  }
+}
+
+.animate-float {
+  animation: float-slow 4s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-slow 5s ease-in-out infinite 2s;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 4.5s ease-in-out infinite 1s;
+}
+
+/* Hyper-Smooth Thermal Printer & Paper Feed Animations */
+@keyframes thermal-print-smooth {
+  0% {
+    clip-path: inset(0 0 100% 0);
+    transform: translateY(-8px);
+    opacity: 0.95;
+  }
+  15% {
+    clip-path: inset(0 0 80% 0);
+  }
+  40% {
+    clip-path: inset(0 0 50% 0);
+  }
+  65% {
+    clip-path: inset(0 0 25% 0);
+  }
+  85% {
+    clip-path: inset(0 0 8% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0% 0);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes paper-tear-drop {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  40% {
+    transform: translateY(8px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(16px) rotate(0.5deg);
+  }
+}
+
+@keyframes print-scan-beam {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes printer-slot-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(14, 165, 233, 0);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.6);
+  }
+}
+
+.animate-print-smooth {
+  animation: thermal-print-smooth 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  will-change: clip-path, transform;
+}
+
+.animate-paper-tear {
+  animation: paper-tear-drop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-print-beam {
+  animation: print-scan-beam 0.9s linear infinite;
+}
+
+.animate-printer-glow {
+  animation: printer-slot-glow 0.8s ease-in-out infinite;
+}
+
+/* Animated GPS Radar & Route Flow */
+@keyframes route-dash-flow {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-route-flow {
+  stroke-dasharray: 8 6;
+  animation: route-dash-flow 1.2s linear infinite;
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 4s linear infinite;
+  transform-origin: center center;
+}
+
+/* ================================================
+   HERO INTERACTIVE ANIMATION — NEW KEYFRAMES
+   ================================================ */
+
+/* Scooter riding back and forth */
+@keyframes scooter-ride {
+  0%   { transform: translateX(-10px) scaleX(1); }
+  45%  { transform: translateX(60px) scaleX(1); }
+  50%  { transform: translateX(60px) scaleX(-1); }
+  95%  { transform: translateX(-10px) scaleX(-1); }
+  100% { transform: translateX(-10px) scaleX(1); }
+}
+
+/* Phone screen slide transition */
+@keyframes phone-slide-in {
+  0%   { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes phone-slide-out {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+/* Badge slide in from left */
+@keyframes badge-from-left {
+  0%   { transform: translateX(-30px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Badge slide in from right */
+@keyframes badge-from-right {
+  0%   { transform: translateX(30px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+/* Progress bar fill */
+@keyframes bar-fill {
+  0%   { width: 0%; }
+  100% { width: 75%; }
+}
+
+/* Gentle hero element float */
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* Glow pulse for OPEN sign */
+@keyframes open-sign-glow {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(34, 197, 94, 0.4); }
+  50%       { box-shadow: 0 0 20px 6px rgba(34, 197, 94, 0.8); }
+}
+
+/* WiFi signal ring pop */
+@keyframes wifi-ring {
+  0%   { transform: scale(0.5); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Bubble float hero */
+@keyframes hero-bubble {
+  0%   { transform: translateY(0) scale(0.6); opacity: 0.7; }
+  100% { transform: translateY(-40px) scale(1.0); opacity: 0; }
+}
+
+/* Door opening swing */
+@keyframes door-swing {
+  0%, 40%, 100% { transform: scaleX(1); }
+  50%, 90%      { transform: scaleX(0.15); }
+}
+
+/* Checkmark draw */
+@keyframes check-draw {
+  0%   { stroke-dashoffset: 30; opacity: 0; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+/* Typewriter cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Notification pop */
+@keyframes notif-pop {
+  0%   { transform: scale(0.7) translateY(8px); opacity: 0; }
+  70%  { transform: scale(1.05) translateY(-2px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Chart bar grow */
+@keyframes chart-grow {
+  0%   { transform: scaleY(0); }
+  100% { transform: scaleY(1); }
+}
+
+/* Waveform pulse */
+@keyframes wave-pulse {
+  0%, 100% { transform: scaleY(0.4); }
+  50%       { transform: scaleY(1.0); }
+}
+
+/* Utility Classes */
+.animate-scooter { animation: scooter-ride 5s ease-in-out infinite; }
+.animate-hero-float { animation: hero-float 4s ease-in-out infinite; }
+.animate-hero-float-d1 { animation: hero-float 4.5s ease-in-out infinite 1s; }
+.animate-hero-float-d2 { animation: hero-float 5s ease-in-out infinite 2s; }
+.animate-open-sign { animation: open-sign-glow 2s ease-in-out infinite; }
+.animate-wifi-ring { animation: wifi-ring 2s ease-out infinite; }
+.animate-wifi-ring-d { animation: wifi-ring 2s ease-out infinite 0.7s; }
+.animate-hero-bubble-1 { animation: hero-bubble 2.5s ease-in infinite; }
+.animate-hero-bubble-2 { animation: hero-bubble 3s ease-in infinite 0.8s; }
+.animate-hero-bubble-3 { animation: hero-bubble 2.2s ease-in infinite 1.5s; }
+.animate-badge-left { animation: badge-from-left 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-badge-right { animation: badge-from-right 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-notif-pop { animation: notif-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-chart-grow { animation: chart-grow 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: bottom; }
+.animate-cursor { animation: cursor-blink 1s step-end infinite; }
+.animate-wave { animation: wave-pulse 0.6s ease-in-out infinite; }
+.animate-wave-d1 { animation: wave-pulse 0.6s ease-in-out infinite 0.1s; }
+.animate-wave-d2 { animation: wave-pulse 0.6s ease-in-out infinite 0.2s; }
+.animate-wave-d3 { animation: wave-pulse 0.6s ease-in-out infinite 0.3s; }
+.animate-wave-d4 { animation: wave-pulse 0.6s ease-in-out infinite 0.4s; }
+.animate-phone-in { animation: phone-slide-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+
+
+
+

@@ -1,0 +1,19 @@
+{
+  "name": "LaundryKu Pro - On-Demand Laundry & POS",
+  "short_name": "LaundryKu",
+  "description": "Aplikasi Laundry On-Demand & Sistem Manajemen Kasir Enterprise",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#090E17",
+  "theme_color": "#0284c7",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
