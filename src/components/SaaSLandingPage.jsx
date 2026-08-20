@@ -14,6 +14,9 @@ import { playPrinterSound, playWhatsAppPing, playWasherChime, playClickSound } f
 export default function SaaSLandingPage({
   onTryDemoPos,
   onOpenSuperAdmin,
+  onOpenOwnerMobile,
+  onOpenCourierApp,
+  onOpenConsumerApp,
   onRegisterTenant,
   theme = 'light',
   onToggleTheme
@@ -21,6 +24,7 @@ export default function SaaSLandingPage({
   const [internalTheme, setInternalTheme] = useState(theme);
   const activeTheme = onToggleTheme ? theme : internalTheme;
   const isDark = activeTheme === 'dark';
+  const [showDemoDropdown, setShowDemoDropdown] = useState(false);
 
   const toggleMode = () => {
     if (onToggleTheme) {
@@ -205,7 +209,7 @@ export default function SaaSLandingPage({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 relative">
           {/* Theme Toggle Button */}
           <button
             onClick={toggleMode}
@@ -220,18 +224,84 @@ export default function SaaSLandingPage({
             <span className="hidden md:inline">{isDark ? 'Mode Terang' : 'Mode Gelap'}</span>
           </button>
 
-          <button
-            onClick={onTryDemoPos}
-            className={`px-3 sm:px-4 py-2 text-xs font-black rounded-xl border transition-all flex items-center gap-1.5 ${
-              isDark 
-                ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700' 
-                : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-xs'
-            }`}
-          >
-            <Monitor className="w-4 h-4 text-primary" />
-            <span className="hidden sm:inline">Coba Demo Kasir POS</span>
-            <span className="sm:hidden">Demo POS</span>
-          </button>
+          {/* Interactive Demo Portal Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowDemoDropdown(!showDemoDropdown)}
+              className={`px-3 sm:px-4 py-2 text-xs font-black rounded-xl border transition-all flex items-center gap-1.5 ${
+                isDark 
+                  ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700' 
+                  : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-xs'
+              }`}
+            >
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span>Buka Demo Suite</span>
+              <ChevronDown className="w-3.5 h-3.5" />
+            </button>
+
+            {/* Dropdown Menu */}
+            {showDemoDropdown && (
+              <div className={`absolute right-0 mt-2 w-56 rounded-2xl border shadow-2xl p-2 z-50 animate-scale-up ${
+                isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
+              }`}>
+                <div className="px-3 py-1.5 border-b border-slate-100 dark:border-slate-800">
+                  <p className="text-[10px] font-black text-slate-400 uppercase">Pilih Modul Demo:</p>
+                </div>
+                <button
+                  onClick={() => { setShowDemoDropdown(false); onTryDemoPos && onTryDemoPos(); }}
+                  className="w-full p-2 rounded-xl text-xs font-black text-left flex items-center gap-2.5 hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span className="text-base">💻</span>
+                  <div>
+                    <p className="text-slate-900 dark:text-white">SmartKasir POS</p>
+                    <p className="text-[9px] text-slate-400 font-bold">Kasir & Cetak Tag Struk</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowDemoDropdown(false); onOpenOwnerMobile && onOpenOwnerMobile(); }}
+                  className="w-full p-2 rounded-xl text-xs font-black text-left flex items-center gap-2.5 hover:bg-indigo-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span className="text-base">👑</span>
+                  <div>
+                    <p className="text-indigo-600 dark:text-indigo-400">SmartOwner ERP</p>
+                    <p className="text-[9px] text-slate-400 font-bold">Omzet & Performa Outlet</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowDemoDropdown(false); onOpenCourierApp && onOpenCourierApp(); }}
+                  className="w-full p-2 rounded-xl text-xs font-black text-left flex items-center gap-2.5 hover:bg-amber-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span className="text-base">🛵</span>
+                  <div>
+                    <p className="text-amber-600 dark:text-amber-400">SmartKurir Radar</p>
+                    <p className="text-[9px] text-slate-400 font-bold">Lacak GPS & Photo Audit</p>
+                  </div>
+                </button>
+                <button
+                  onClick={() => { setShowDemoDropdown(false); onOpenConsumerApp && onOpenConsumerApp(); }}
+                  className="w-full p-2 rounded-xl text-xs font-black text-left flex items-center gap-2.5 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <span className="text-base">📱</span>
+                  <div>
+                    <p className="text-emerald-600 dark:text-emerald-400">App Konsumen</p>
+                    <p className="text-[9px] text-slate-400 font-bold">Nota Digital & Tracking</p>
+                  </div>
+                </button>
+                <div className="border-t border-slate-100 dark:border-slate-800 my-1 pt-1">
+                  <button
+                    onClick={() => { setShowDemoDropdown(false); onOpenSuperAdmin && onOpenSuperAdmin(); }}
+                    className="w-full p-2 rounded-xl text-xs font-black text-left flex items-center gap-2.5 bg-slate-950 text-white hover:bg-slate-900 transition-colors shadow-sm"
+                  >
+                    <span className="text-base">⚙️</span>
+                    <div>
+                      <p className="text-white">Super Admin Master</p>
+                      <p className="text-[9px] text-slate-400 font-bold">CMS Pemilik SaaS Platform</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => handleOpenTrial(SAAS_PLANS[0])}

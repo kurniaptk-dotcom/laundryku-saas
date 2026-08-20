@@ -1097,6 +1097,9 @@ export default function App() {
           <SaaSLandingPage
             onTryDemoPos={() => setActiveView('web')}
             onOpenSuperAdmin={() => setActiveView('super_admin')}
+            onOpenOwnerMobile={() => setActiveView('owner_mobile')}
+            onOpenCourierApp={() => setActiveView('courier_app')}
+            onOpenConsumerApp={() => setActiveView('mobile')}
             onRegisterTenant={handleRegisterTenant}
             theme={theme}
             onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
