@@ -7,6 +7,7 @@ import SuperAdminDashboard from './components/SuperAdminDashboard';
 import TenantSettingsModal from './components/TenantSettingsModal';
 import SmartCourierApp from './components/screens/SmartCourierApp';
 import SmartOwnerMobile from './components/screens/SmartOwnerMobile';
+import RoleLoginModal from './components/RoleLoginModal';
 import { Smartphone, Monitor, Info, Sparkles, Check, Bell, X, AlertCircle, RefreshCw, UserCheck, Globe, Building2, Crown, Truck, User, Sun, Moon } from 'lucide-react';
 import { calculateTier } from './utils/tierHelper';
 import { createSubscriptionInstance, isSubscriptionActive, SUBSCRIPTION_PLANS } from './utils/subscriptionHelper';
@@ -14,6 +15,7 @@ import { DEFAULT_STAFF, calculatePayroll, exportPayrollToCSV } from './utils/pay
 import { DEFAULT_REVIEWS } from './utils/feedbackHelper';
 import { DEFAULT_ORDER_PHOTOS } from './utils/photoAuditHelper';
 import { DEFAULT_TENANTS } from './utils/saasHelper';
+import { resolveCurrentRoute, navigateToModule } from './utils/routeHelper';
 
 // Helper for LocalStorage Persistence
 const getStorage = (key, fallback) => {
@@ -34,26 +36,21 @@ const setStorage = (key, value) => {
 };
 
 export default function App() {
-  const [activeView, setActiveView] = useState(() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('admin') === 'true' || params.get('view') === 'super_admin' || params.get('view') === 'admin') {
-        return 'super_admin';
-      }
-      if (params.get('view') === 'pos' || params.get('view') === 'kasir' || params.get('view') === 'web') {
-        return 'web';
-      }
-      if (params.get('view') === 'owner') {
-        return 'owner_mobile';
-      }
-      if (params.get('view') === 'kurir') {
-        return 'courier_app';
-      }
-    } catch (e) {
-      console.error(e);
-    }
-    return 'saas_landing';
-  }); // 'saas_landing' | 'web' | 'super_admin' | 'mobile' | 'owner_mobile' | 'courier_app'
+  const [activeView, setActiveView] = useState(() => resolveCurrentRoute()); // 'saas_landing' | 'web' | 'super_admin' | 'mobile' | 'owner_mobile' | 'courier_app'
+  const [authenticatedRoles, setAuthenticatedRoles] = useState({
+    super_admin: false,
+    web: false,
+    owner_mobile: false,
+    courier_app: false,
+    mobile: true,
+    saas_landing: true
+  });
+
+  // Sync route navigation function
+  const handleSwitchView = (newView) => {
+    setActiveView(newView);
+    navigateToModule(newView);
+  };
   const [theme, setTheme] = useState(() => getStorage('laundry_theme', 'light')); // 'light' (default) | 'dark'
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstallable, setIsInstallable] = useState(false);
@@ -1112,6 +1109,16 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <main className="flex-1 overflow-y-auto relative bg-gradient-to-b from-slate-100 to-sky-50/40">
+        {/* Role Authentication Guard for Protected Portals */}
+        {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] && (
+          <RoleLoginModal
+            roleKey={activeView}
+            onAuthenticate={(roleKey) => setAuthenticatedRoles(prev => ({ ...prev, [roleKey]: true }))}
+            onCancel={() => setActiveView('saas_landing')}
+            isDark={theme === 'dark'}
+          />
+        )}
+
         {activeView === 'saas_landing' ? (
           <SaaSLandingPage
             onTryDemoPos={() => setActiveView('web')}
