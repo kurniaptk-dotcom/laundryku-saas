@@ -105,6 +105,8 @@ export default function SaaSLandingPage({
   const [formBusiness, setFormBusiness] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formCity, setFormCity] = useState('');
+  const [formPaymentMethod, setFormPaymentMethod] = useState('trial'); // 'trial' | 'qris' | 'va'
+  const [selectedVaBank, setSelectedVaBank] = useState('bca'); // 'bca' | 'mandiri' | 'bri' | 'bni'
 
   // Auto tick IoT timer for lively feel
   useEffect(() => {
@@ -3359,25 +3361,113 @@ export default function SaaSLandingPage({
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Opsi Pembayaran Langganan (SaaS Monetization):
+                  Pilih Opsi Pembayaran Langganan:
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { id: 'trial', label: '14 Hari Trial', price: 'Rp 0', badge: 'GRATIS' },
-                    { id: 'qris', label: 'QRIS Instant', price: selectedPlanForTrial?.priceMonthly ? `Rp ${(selectedPlanForTrial.priceMonthly).toLocaleString('id-ID')}` : 'Rp 250rb', badge: 'INSTANT' },
-                    { id: 'va', label: 'Virtual Account', price: 'BCA / Mandiri', badge: 'AUTO-CHECK' },
-                  ].map(m => (
-                    <div key={m.id} className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                      isDark ? 'bg-slate-950 border-sky-500/40 text-white' : 'bg-sky-50/50 border-sky-200 text-slate-900'
-                    }`}>
-                      <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-primary text-white">{m.badge}</span>
-                      <p className="text-xs font-black mt-1">{m.label}</p>
-                      <p className="text-[10px] text-slate-400 font-bold">{m.price}</p>
-                    </div>
-                  ))}
+                    { id: 'trial', label: '14 Hari Trial', price: 'Rp 0', badge: 'GRATIS', icon: '🎁' },
+                    { id: 'qris', label: 'QRIS Instant', price: selectedPlanForTrial?.priceMonthly ? `Rp ${(selectedPlanForTrial.priceMonthly).toLocaleString('id-ID')}` : 'Rp 250rb', badge: 'INSTANT', icon: '📲' },
+                    { id: 'va', label: 'Virtual Account', price: 'BCA / Mandiri', badge: 'AUTO-CHECK', icon: '🏦' },
+                  ].map(m => {
+                    const isSelected = formPaymentMethod === m.id;
+                    return (
+                      <button
+                        type="button"
+                        key={m.id}
+                        onClick={() => setFormPaymentMethod(m.id)}
+                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative overflow-hidden ${
+                          isSelected
+                            ? 'border-2 border-primary bg-sky-50 dark:bg-sky-950/40 text-primary shadow-clay-sm scale-105 font-black ring-2 ring-primary/20'
+                            : isDark
+                              ? 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                              : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 shadow-xs'
+                        }`}
+                      >
+                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                          isSelected ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                        }`}>
+                          {m.badge}
+                        </span>
+                        <p className="text-xs font-black mt-1 flex items-center justify-center gap-1">
+                          <span>{m.icon}</span>
+                          <span>{m.label}</span>
+                        </p>
+                        <p className={`text-[10px] font-bold ${isSelected ? 'text-primary' : 'text-slate-400'}`}>{m.price}</p>
+                      </button>
+                    );
+                  })}
                 </div>
+
+                {/* DYNAMIC PAYMENT METHOD PREVIEW & DETAILS BOX */}
+                {formPaymentMethod === 'trial' && (
+                  <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-1">
+                    <p className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <span>✓ Aktivasi Instant 14 Hari Free Trial</span>
+                    </p>
+                    <p className="text-[11px] text-slate-500 font-bold">
+                      Tanpa perlu memasukkan kartu kredit atau DP. Langsung bisa digunakan untuk kasir & cetak struk!
+                    </p>
+                  </div>
+                )}
+
+                {formPaymentMethod === 'qris' && (
+                  <div className="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-900/50 text-xs space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-black text-sky-600 dark:text-sky-400">Pembayaran QRIS All Payment</p>
+                        <p className="text-[10px] text-slate-500 font-bold">BCA, Mandiri, GoPay, OVO, ShopeePay, Dana</p>
+                      </div>
+                      <span className="font-black text-xs text-emerald-600">
+                        Total: Rp {(selectedPlanForTrial?.priceMonthly || 250000).toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                    <div className="p-2 bg-white dark:bg-slate-900 rounded-xl border flex items-center gap-3">
+                      <div className="w-12 h-12 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xl font-black flex-shrink-0">
+                        📲
+                      </div>
+                      <div className="text-[11px] font-bold space-y-0.5">
+                        <p className="text-slate-800 dark:text-slate-200">Scan Kode QRIS Setelah Klik Lanjut</p>
+                        <p className="text-emerald-500 font-black">Status: Menunggu Scan QRIS</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {formPaymentMethod === 'va' && (
+                  <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 text-xs space-y-2">
+                    <p className="font-black text-indigo-600 dark:text-indigo-400">Pilih Bank Virtual Account:</p>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {[
+                        { id: 'bca', name: 'BCA' },
+                        { id: 'mandiri', name: 'Mandiri' },
+                        { id: 'bri', name: 'BRI' },
+                        { id: 'bni', name: 'BNI' },
+                      ].map(b => (
+                        <button
+                          type="button"
+                          key={b.id}
+                          onClick={() => setSelectedVaBank(b.id)}
+                          className={`py-1 text-xs font-black rounded-lg border transition-all ${
+                            selectedVaBank === b.id
+                              ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
+                              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200'
+                          }`}
+                        >
+                          {b.name}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="p-2 bg-white dark:bg-slate-900 rounded-xl border flex justify-between items-center text-[11px]">
+                      <div>
+                        <span className="text-[10px] text-slate-400 uppercase font-black">No. VA ({selectedVaBank.toUpperCase()}):</span>
+                        <p className="font-black text-slate-900 dark:text-white text-xs tracking-wider">88029{formPhone ? formPhone.slice(-6) : '812345'}</p>
+                      </div>
+                      <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 text-[10px] font-black rounded border border-emerald-500/20">Auto Check</span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="pt-2 flex gap-3">
