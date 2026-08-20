@@ -34,7 +34,26 @@ const setStorage = (key, value) => {
 };
 
 export default function App() {
-  const [activeView, setActiveView] = useState('saas_landing'); // 'saas_landing' | 'web' | 'super_admin' | 'mobile'
+  const [activeView, setActiveView] = useState(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === 'true' || params.get('view') === 'super_admin' || params.get('view') === 'admin') {
+        return 'super_admin';
+      }
+      if (params.get('view') === 'pos' || params.get('view') === 'kasir' || params.get('view') === 'web') {
+        return 'web';
+      }
+      if (params.get('view') === 'owner') {
+        return 'owner_mobile';
+      }
+      if (params.get('view') === 'kurir') {
+        return 'courier_app';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return 'saas_landing';
+  }); // 'saas_landing' | 'web' | 'super_admin' | 'mobile' | 'owner_mobile' | 'courier_app'
   const [theme, setTheme] = useState(() => getStorage('laundry_theme', 'light')); // 'light' (default) | 'dark'
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstallable, setIsInstallable] = useState(false);
