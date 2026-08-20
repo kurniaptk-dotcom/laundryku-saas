@@ -1091,54 +1091,6 @@ export default function App() {
         </header>
       )}
 
-              <div className="hidden md:flex items-center gap-2 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-2xl">
-                <span className="text-xs">⭐</span>
-                <span className="text-xs font-black text-amber-700">{loyaltyPoints.toLocaleString('id-ID')} Pts</span>
-              </div>
-
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-sky-50 border border-sky-100 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-xl sm:rounded-2xl">
-                <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-[11px] sm:text-xs font-black text-slate-700">
-                  <span className="hidden sm:inline">Wallet: </span>
-                  <span className="text-primary font-black">Rp {walletBalance >= 1000 ? `${(walletBalance/1000).toLocaleString('id-ID')}k` : walletBalance}</span>
-                </span>
-              </div>
-
-              <button
-                onClick={() => setIsTopUpOpen(true)}
-                className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 bg-primary hover:bg-primary-dark text-white rounded-lg sm:rounded-xl font-extrabold text-[11px] sm:text-xs shadow-clay-sm transition-all"
-              >
-                + Top Up
-              </button>
-
-              <button
-                onClick={handleLogout}
-                className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 rounded-xl font-black text-[11px] border border-slate-200 transition-colors"
-                title="Keluar dari akun saat ini"
-              >
-                <span>Logout</span>
-              </button>
-            </>
-          ) : (
-            <div className="flex items-center gap-2">
-              <span className="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 text-xs font-black rounded-xl flex items-center gap-1.5">
-                <span>🔒</span>
-                <span>Mode Tamu</span>
-              </span>
-              <button
-                onClick={() => {
-                  setActiveView('mobile');
-                  handleLogin(customers[0]?.id || 'CUST-001');
-                }}
-                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs shadow-clay-sm transition-all"
-              >
-                Masuk Cepat
-              </button>
-            </div>
-          )}
-        </div>
-      </header>
-
       {/* Main Workspace Frame */}
       <main className="flex-1 overflow-y-auto relative bg-gradient-to-b from-slate-100 to-sky-50/40">
         {activeView === 'saas_landing' ? (
