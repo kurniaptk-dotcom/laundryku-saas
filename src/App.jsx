@@ -1119,7 +1119,11 @@ export default function App() {
         {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] ? (
           <RoleLoginModal
             roleKey={activeView}
-            onAuthenticate={(roleKey) => setAuthenticatedRoles(prev => ({ ...prev, [roleKey]: true }))}
+            tenants={tenants}
+            onAuthenticate={(roleKey, tenantId) => {
+              if (tenantId) setCurrentTenantId(tenantId);
+              setAuthenticatedRoles(prev => ({ ...prev, [roleKey]: true }));
+            }}
             onCancel={() => setActiveView('saas_landing')}
             isDark={theme === 'dark'}
           />
