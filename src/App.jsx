@@ -16,6 +16,7 @@ import { DEFAULT_REVIEWS } from './utils/feedbackHelper';
 import { DEFAULT_ORDER_PHOTOS } from './utils/photoAuditHelper';
 import { DEFAULT_TENANTS } from './utils/saasHelper';
 import { resolveCurrentRoute, navigateToModule } from './utils/routeHelper';
+import { AutoManager } from './utils/autoManager';
 
 // Helper for LocalStorage Persistence
 const getStorage = (key, fallback) => {
@@ -45,6 +46,11 @@ export default function App() {
     mobile: true,
     saas_landing: true
   });
+
+  // Autopilot Engine Initialization
+  useEffect(() => {
+    AutoManager.initSystem();
+  }, []);
 
   // Sync route navigation function
   const handleSwitchView = (newView) => {
