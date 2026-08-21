@@ -328,11 +328,12 @@ export default function MobileEmulator({
                 <p className="text-xs font-semibold text-slate-400 mt-0.5">Informasi profil, saldo, dan pengaturan akun</p>
               </div>
               <button
-                onClick={() => setShowSwitchUserModal(true)}
-                className="px-3.5 py-2 bg-sky-50 hover:bg-sky-100 text-primary border border-sky-200 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-xs"
+                onClick={() => onLogout?.()}
+                className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl font-black text-xs flex items-center gap-1.5 shadow-xs transition-colors"
+                title="Keluar dari akun ini"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Ganti Akun</span>
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Keluar Akun</span>
               </button>
             </div>
 
@@ -440,7 +441,6 @@ export default function MobileEmulator({
                 {[
                   { title: '💻 Masuk ke Portal Admin & Kasir POS', desc: 'Akses dashboard ERP, antrean mesin, manajemen stok & payroll', icon: Monitor, isFeatured: true, action: () => onSwitchToAdmin?.() },
                   { title: 'Paket Langganan Kuota Kiloan', desc: 'Beli paket cuci 25-100 Kg hemat hingga 50%', icon: Package, action: () => setShowSubscriptionModal(true) },
-                  { title: 'Ganti Akun Pengguna / Member', desc: 'Beralih antara profil Aisyah, Budi Pratama, atau Citra Dewi', icon: Users, action: () => setShowSwitchUserModal(true) },
                   { title: 'Toko Tukar Poin Hadiah', desc: 'Tukarkan poin dengan voucher cuci dan merchandise', icon: Gift, action: () => setShowRewardsModal(true) },
                   { title: 'Pemberitahuan & Notifikasi', desc: 'Lihat seluruh update pengerjaan laundry Anda', icon: Bell, action: () => setShowNotifModal(true) },
                   { title: 'Pusat Bantuan & WhatsApp CS', desc: 'Konsultasi keluhan dan pertanyaan 24/7', icon: HelpCircle },
@@ -563,56 +563,6 @@ export default function MobileEmulator({
             );
           })}
         </nav>
-      )}
-
-      {/* MODAL: GANTI AKUN PENGGUNA (SWITCH CUSTOMER) */}
-      {showSwitchUserModal && (
-        <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in">
-          <div className="bg-white w-full max-w-sm rounded-3xl shadow-soft-lg p-6 space-y-5 border border-slate-200 animate-scale-up">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2 text-primary">
-                <Users className="w-5 h-5" />
-                <h3 className="text-base font-black text-slate-900">Pilih Akun Pelanggan</h3>
-              </div>
-              <button onClick={() => setShowSwitchUserModal(false)} className="p-1 text-slate-400 hover:text-slate-700">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-500 font-semibold">
-              Pilih profil pengguna untuk melihat pesanan, saldo dompet, dan riwayat khusus akun tersebut:
-            </p>
-
-            <div className="space-y-2">
-              {customers.map(c => {
-                const isSelected = c.id === currentCustomer.id;
-                return (
-                  <div
-                    key={c.id}
-                    onClick={() => {
-                      if (onChangeCustomer) onChangeCustomer(c.id);
-                      setShowSwitchUserModal(false);
-                    }}
-                    className={`p-4 rounded-2.5xl border-2 cursor-pointer transition-all flex items-center justify-between ${
-                      isSelected ? 'border-primary bg-primary/5 ring-4 ring-primary/10 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary to-indigo-600 text-white font-black text-sm flex items-center justify-center shadow-clay-sm">
-                        {c.name.slice(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-black text-slate-900">{c.name}</h4>
-                        <p className="text-[10px] text-slate-400 font-semibold">{c.tier} · Saldo: Rp {c.balance.toLocaleString('id-ID')}</p>
-                      </div>
-                    </div>
-                    {isSelected && <Check className="w-4 h-4 text-primary stroke-[3]" />}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       )}
 
       {/* MODAL: TOKO TUKAR POIN */}

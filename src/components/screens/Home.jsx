@@ -118,68 +118,21 @@ export default function Home({
     <div className="flex flex-col h-full bg-slate-50 overflow-y-auto no-scrollbar pb-28">
       {/* 1. Top Header App Bar with Quick Account Switcher */}
       <div className="flex items-center justify-between px-5 sm:px-6 pt-5 pb-4 bg-white/95 backdrop-blur-md border-b border-slate-100 sticky top-0 z-20 shadow-xs">
-        <div className="relative">
-          <button
-            onClick={() => setShowProfileSwitcher(!showProfileSwitcher)}
-            className="flex items-center gap-2 group text-left focus:outline-none"
-            title="Klik untuk ganti akun pelanggan"
-          >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-clay-sm flex-shrink-0">
-              {currentCustomer?.name?.slice(0, 2).toUpperCase() || 'AS'}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-indigo-600 text-white font-black text-xs flex items-center justify-center shadow-clay-sm flex-shrink-0">
+            {currentCustomer?.name?.slice(0, 2).toUpperCase() || 'AS'}
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight flex items-center gap-1">
+                <span>Halo, {currentCustomer?.name?.split(' ')[0] || 'Pelanggan'}</span>
+                {isVip && <span className="text-xs">👑</span>}
+              </h1>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <h1 className="text-base sm:text-lg font-black text-slate-900 tracking-tight group-hover:text-primary transition-colors flex items-center gap-1">
-                  <span>Halo, {currentCustomer?.name?.split(' ')[0] || 'Pelanggan'}</span>
-                  {isVip && <span className="text-xs">👑</span>}
-                </h1>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-transform ${showProfileSwitcher ? 'rotate-180 text-primary' : ''}`} />
-              </div>
-              <p className="text-[11px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1 truncate max-w-[200px] sm:max-w-[240px]">
-                <span>🧼 {branding.laundryName || 'LaundryKu Pro'}</span>
-              </p>
-            </div>
-          </button>
-
-          {/* Profile Switcher Dropdown Modal */}
-          {showProfileSwitcher && (
-            <div className="absolute top-14 left-0 w-72 bg-white rounded-3xl shadow-soft-lg border border-slate-200 p-3 z-30 space-y-1.5 animate-scale-up">
-              <div className="flex justify-between items-center px-2 py-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Pilih Akun Pelanggan</p>
-                <span className="text-[9px] font-black text-primary bg-sky-50 px-2 py-0.5 rounded-full">Multi-User</span>
-              </div>
-              {customers.map(c => {
-                const isCurrent = c.id === currentCustomer?.id;
-                return (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      if (onChangeCustomer) onChangeCustomer(c.id);
-                      setShowProfileSwitcher(false);
-                    }}
-                    className={`w-full flex items-center justify-between p-3 rounded-2xl text-xs font-bold transition-all ${
-                      isCurrent ? 'bg-primary text-white shadow-clay-sm ring-2 ring-primary/20' : 'hover:bg-slate-50 text-slate-700'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs ${
-                        isCurrent ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
-                      }`}>
-                        {c.name.slice(0, 2).toUpperCase()}
-                      </div>
-                      <div className="text-left">
-                        <p className="leading-tight font-black">{c.name}</p>
-                        <p className={`text-[10px] font-semibold ${isCurrent ? 'text-sky-100' : 'text-slate-400'}`}>
-                          {c.tier} · Rp {(c.balance || 0).toLocaleString('id-ID')}
-                        </p>
-                      </div>
-                    </div>
-                    {isCurrent && <CheckCircle2 className="w-4 h-4 text-white" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+            <p className="text-[11px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1 truncate max-w-[200px] sm:max-w-[240px]">
+              <span>🧼 {branding.laundryName || 'LaundryKu Pro'}</span>
+            </p>
+          </div>
         </div>
         
         {/* Right Header Badges */}

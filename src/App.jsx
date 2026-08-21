@@ -487,7 +487,8 @@ export default function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    triggerToast('Anda Telah Logout', 'Silakan masukkan nomor WhatsApp untuk masuk kembali.', 'info');
+    setAuthenticatedRoles(prev => ({ ...prev, mobile: false }));
+    triggerToast('Anda Telah Logout', 'Silakan masukkan nomor WhatsApp Anda untuk masuk kembali.', 'info');
   };
 
   const handleRegister = (newCustData) => {
