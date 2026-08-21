@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { 
   Lock, Mail, ArrowRight, ShieldCheck, Eye, EyeOff, Sparkles, 
-  Crown, Monitor, Truck, ShieldAlert, ChevronLeft, Building2, User
+  Crown, Monitor, Truck, Smartphone, ShieldAlert, ChevronLeft, Building2, User
 } from 'lucide-react';
 import { DEFAULT_TENANTS } from '../utils/saasHelper';
 
 export default function DedicatedRoleLoginPage({ 
   roleKey = 'owner_mobile', 
   tenants = DEFAULT_TENANTS, 
+  customers = [],
   onLoginSuccess, 
   onBackToLanding,
   isDark = false 
@@ -74,6 +75,20 @@ export default function DedicatedRoleLoginPage({
       labelIdentifier: 'No. WhatsApp Driver / ID Kurir:',
       placeholderIdentifier: 'contoh: 081399881122',
       defaultHint: 'No. HP Demo: 081399881122 | PIN: 1234'
+    },
+    mobile: {
+      title: 'Portal Pelanggan & Lacak Cucian',
+      subtitle: 'Masukkan No. WhatsApp Anda untuk melacak status cucian, saldo laundry wallet, dan poin member.',
+      badge: 'PORTAL KONSUMEN & TRACKING',
+      badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30',
+      icon: '📱',
+      themeBg: 'from-slate-950 via-teal-950/40 to-slate-900 text-white',
+      cardBg: 'bg-slate-900/90 border-slate-800 text-white backdrop-blur-xl',
+      inputBg: 'bg-slate-950 border-slate-800 text-white placeholder-slate-500',
+      buttonGradient: 'from-teal-400 via-emerald-500 to-cyan-600 shadow-emerald-500/20',
+      labelIdentifier: 'No. WhatsApp / Email Pelanggan:',
+      placeholderIdentifier: 'contoh: 0812-3456-7890 atau aisyah@laundrymail.com',
+      defaultHint: 'No. WA Demo: 0812-3456-7890 | PIN: 1234'
     }
   };
 
@@ -84,7 +99,7 @@ export default function DedicatedRoleLoginPage({
     setErrorMsg('');
 
     if (!identifier.trim()) {
-      setErrorMsg('Silakan masukkan Email atau No. WhatsApp Anda.');
+      setErrorMsg('Silakan masukkan No. WhatsApp atau Email Anda.');
       return;
     }
 
@@ -102,6 +117,21 @@ export default function DedicatedRoleLoginPage({
       setTimeout(() => {
         setIsLoading(false);
         onLoginSuccess('super_admin', 'TNT-001');
+      }, 400);
+      return;
+    }
+
+    // Customer Portal Login Detection
+    if (roleKey === 'mobile') {
+      const matchedCustomer = (customers || []).find(c => {
+        const phoneClean = (c.phone || '').replace(/[^0-9]/g, '');
+        const emailClean = (c.email || '').toLowerCase();
+        return (phoneClean && inputClean.includes(phoneClean)) || (emailClean && inputClean.includes(emailClean));
+      });
+
+      setTimeout(() => {
+        setIsLoading(false);
+        onLoginSuccess('mobile', 'TNT-001', matchedCustomer?.id || 'CUST-001');
       }, 400);
       return;
     }

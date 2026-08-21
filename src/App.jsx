@@ -43,7 +43,7 @@ export default function App() {
     web: false,
     owner_mobile: false,
     courier_app: false,
-    mobile: true,
+    mobile: false,
     saas_landing: true
   });
 
@@ -1115,13 +1115,15 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <main className="flex-1 overflow-y-auto relative bg-gradient-to-b from-slate-100 to-sky-50/40">
-        {/* Full-Page Dedicated Role Login Portals */}
-        {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] ? (
+        {/* Full-Page Dedicated Role Login Portals (Super Admin, Owner, Kasir, Kurir, Customer) */}
+        {activeView !== 'saas_landing' && !authenticatedRoles[activeView] ? (
           <DedicatedRoleLoginPage
             roleKey={activeView}
             tenants={tenants}
-            onLoginSuccess={(authRole, tenantId) => {
+            customers={customers}
+            onLoginSuccess={(authRole, tenantId, customerId) => {
               if (tenantId) setCurrentTenantId(tenantId);
+              if (customerId) setCurrentCustomerId(customerId);
               setAuthenticatedRoles(prev => ({ ...prev, [authRole]: true }));
               if (authRole === 'super_admin') {
                 setActiveView('super_admin');
