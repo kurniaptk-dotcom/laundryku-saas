@@ -18,6 +18,7 @@ export default function SmartOwnerMobile({
   branding = {},
   onSwitchToFullWeb,
   onOpenBrandingSettings,
+  onLogout,
   theme = 'light',
   onToggleTheme
 }) {
@@ -63,20 +64,19 @@ export default function SmartOwnerMobile({
     setTimeout(() => {
       setWithdrawSuccess(false);
       setShowWithdrawModal(false);
-    }, 2500);
+    }, 2000);
   };
 
   return (
-    <div className={`max-w-md mx-auto min-h-screen flex flex-col font-sans relative shadow-2xl overflow-hidden border transition-colors duration-300 ${
-      isDark ? 'bg-slate-950 text-slate-100 border-slate-800' : 'bg-[#F1F5F9] text-slate-900 border-slate-200'
+    <div className={`w-full max-w-lg rounded-none sm:rounded-[40px] shadow-2xl border overflow-hidden transition-colors ${
+      isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
     }`}>
-      {/* 1. Owner Top Bar */}
-      <header className={`border-b p-4 sticky top-0 z-40 space-y-3 transition-colors ${
-        isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-xs'
-      }`}>
-        <div className="flex items-center justify-between">
+      
+      {/* 1. Header Bar */}
+      <header className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 space-y-4">
+        <div className="flex justify-between items-center">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-400 via-primary to-indigo-600 flex items-center justify-center text-white text-lg font-black shadow-md">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-500 to-indigo-600 flex items-center justify-center text-white text-xl shadow-clay-sm">
               👑
             </div>
             <div>
@@ -126,6 +126,15 @@ export default function SmartOwnerMobile({
                 title="Buka Versi Desktop Lengkap"
               >
                 💻 Web ERP
+              </button>
+            )}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="p-2 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-black transition-colors cursor-pointer"
+                title="Keluar Akun Owner"
+              >
+                🚪
               </button>
             )}
           </div>

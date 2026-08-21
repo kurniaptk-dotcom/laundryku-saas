@@ -111,9 +111,12 @@ export default function WebDashboard({
               <p className="text-[10px] text-slate-500">Cempaka Putih Outlet</p>
             </div>
           </div>
-          <button className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-bold text-slate-500 hover:text-rose-400 transition-colors">
-            <LogOut className="w-4 h-4" />
-            <span>Keluar Kasir</span>
+          <button 
+            onClick={onLogout}
+            className="w-full flex items-center gap-3 px-3 py-2 text-[11px] font-bold text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
+          >
+            <LogOut className="w-4 h-4 text-rose-500" />
+            <span>Keluar Kasir (Logout)</span>
           </button>
         </div>
       </aside>

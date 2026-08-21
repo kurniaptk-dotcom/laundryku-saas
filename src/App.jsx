@@ -38,14 +38,24 @@ const setStorage = (key, value) => {
 
 export default function App() {
   const [activeView, setActiveView] = useState(() => resolveCurrentRoute()); // 'saas_landing' | 'web' | 'super_admin' | 'mobile' | 'owner_mobile' | 'courier_app'
-  const [authenticatedRoles, setAuthenticatedRoles] = useState({
+  const [authenticatedRoles, setAuthenticatedRoles] = useState(() => getStorage('laundry_auth_roles', {
     super_admin: false,
     web: false,
     owner_mobile: false,
     courier_app: false,
     mobile: false,
     saas_landing: true
-  });
+  }));
+
+  useEffect(() => {
+    setStorage('laundry_auth_roles', authenticatedRoles);
+  }, [authenticatedRoles]);
+
+  // Unified Role Logout Handler
+  const handleRoleLogout = (roleKeyToLogout) => {
+    setAuthenticatedRoles(prev => ({ ...prev, [roleKeyToLogout]: false }));
+    triggerToast('Sesi Berakhir', 'Anda telah berhasil keluar dari portal.', 'info');
+  };
 
   // Autopilot Engine Initialization
   useEffect(() => {
@@ -1163,6 +1173,7 @@ export default function App() {
             onSelectTenantToManage={handleSelectTenantToManage}
             onSwitchToLanding={() => setActiveView('saas_landing')}
             onSwitchToMobile={() => setActiveView('mobile')}
+            onLogout={() => handleRoleLogout('super_admin')}
             theme={theme}
             onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
           />
@@ -1175,6 +1186,7 @@ export default function App() {
               onUpdateOrderStatus={handleUpdateOrderStatus}
               branding={currentTenant?.branding || {}}
               onSwitchRole={setActiveView}
+              onLogout={() => handleRoleLogout('courier_app')}
               theme={theme}
               onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
             />
@@ -1191,6 +1203,7 @@ export default function App() {
               branding={currentTenant?.branding || {}}
               onSwitchToFullWeb={() => setActiveView('web')}
               onOpenBrandingSettings={() => setIsBrandingModalOpen(true)}
+              onLogout={() => handleRoleLogout('owner_mobile')}
               theme={theme}
               onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
             />
@@ -1200,7 +1213,7 @@ export default function App() {
             <MobileEmulator
               isLoggedIn={isLoggedIn}
               onLogin={handleLogin}
-              onLogout={handleLogout}
+              onLogout={() => handleRoleLogout('mobile')}
               onRegister={handleRegister}
               currentCustomer={currentCustomer}
               customers={customers}
@@ -1279,6 +1292,7 @@ export default function App() {
             onDeleteMachine={handleDeleteMachine}
             onResetDemoData={handleResetDemoData}
             onSwitchToMobile={() => setActiveView('mobile')}
+            onLogout={() => handleRoleLogout('web')}
             branding={currentTenant?.branding || {}}
             onOpenBrandingSettings={() => setIsBrandingModalOpen(true)}
             onOpenSuperAdmin={() => setActiveView('super_admin')}

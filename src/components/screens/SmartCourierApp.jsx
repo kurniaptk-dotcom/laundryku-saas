@@ -15,6 +15,7 @@ export default function SmartCourierApp({
   onUpdateOrderStatus,
   branding = {},
   onSwitchRole,
+  onLogout,
   theme = 'light',
   onToggleTheme
 }) {
@@ -48,9 +49,23 @@ export default function SmartCourierApp({
 
   const courierTasks = activeOrders.filter(order => {
     const isPickup = order.status === 'menunggu_penjemputan' || order.status === 'kurir_menuju_lokasi';
-    const isDelivery = order.status === 'siap_diambil' || order.status === 'sedang_diantar';
-    return isPickup || isDelivery || (order.courierName === currentCourier.name);
+    const isDelivery = order.status === 'siap_diantar' || order.status === 'kurir_antar_ke_pelanggan';
+    if (taskFilter === 'pickup') return isPickup;
+    if (taskFilter === 'delivery') return isDelivery;
+    if (taskFilter === 'done') return order.status === 'selesai';
+    return isPickup || isDelivery;
   });
+
+  const handleStartTask = (order) => {
+    const isPickup = order.status === 'menunggu_penjemputan';
+    const nextStatus = isPickup ? 'kurir_menuju_lokasi' : 'kurir_antar_ke_pelanggan';
+    
+    if (onUpdateOrderStatus) {
+      onUpdateOrderStatus(order.id, nextStatus);
+    }
+    setSuccessToast(`Status diperbarui: Kurir sedang menuju lokasi!`);
+    setTimeout(() => setSuccessToast(''), 3000);
+  };
 
   const completedTodayTasks = orderHistory.filter(o => o.courierName === currentCourier.name || o.fulfillmentType === 'delivery');
 
@@ -71,15 +86,6 @@ export default function SmartCourierApp({
 
   const completedCount = completedTodayTasks.length;
   const estimatedEarnings = completedCount * 5000;
-
-  const handleStartTrip = (orderId, currentStatus) => {
-    const nextStatus = currentStatus === 'menunggu_penjemputan' ? 'kurir_menuju_lokasi' : 'sedang_diantar';
-    if (onUpdateOrderStatus) {
-      onUpdateOrderStatus(orderId, nextStatus);
-    }
-    setSuccessToast(`Status diperbarui: Kurir sedang menuju lokasi!`);
-    setTimeout(() => setSuccessToast(''), 3000);
-  };
 
   const handleCompleteHandover = () => {
     if (!selectedOrderForHandover) return;
@@ -125,7 +131,7 @@ export default function SmartCourierApp({
                   {branding.laundryName || 'SmartKurir Pro'}
                 </h1>
                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-black border ${
-                  isDark ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
+                  isDark ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-amber-50 text-amber-700 border-amber-200'
                 }`}>
                   DRIVER APP
                 </span>
@@ -160,6 +166,17 @@ export default function SmartCourierApp({
               <span className={`w-2 h-2 rounded-full ${isOnline ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
               <span>{isOnline ? 'ONLINE' : 'OFFLINE'}</span>
             </button>
+
+            {/* Logout Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl text-xs font-black transition-colors cursor-pointer"
+                title="Keluar Akun Kurir"
+              >
+                🚪
+              </button>
+            )}
           </div>
         </div>
 
