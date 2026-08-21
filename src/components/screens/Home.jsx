@@ -25,7 +25,8 @@ export default function Home({
   onOpenRewards,
   onOpenNotifs,
   unreadNotifCount = 0,
-  onSwitchToAdmin
+  onSwitchToAdmin,
+  branding = {}
 }) {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [showProfileSwitcher, setShowProfileSwitcher] = useState(false);
@@ -134,9 +135,8 @@ export default function Home({
                 </h1>
                 <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-primary transition-transform ${showProfileSwitcher ? 'rotate-180 text-primary' : ''}`} />
               </div>
-              <p className="text-[11px] font-semibold text-slate-400 flex items-center gap-1 truncate max-w-[200px] sm:max-w-[240px]">
-                <MapPin className="w-3 h-3 text-primary flex-shrink-0" />
-                <span className="truncate">{currentCustomer?.address || 'Jakarta'}</span>
+              <p className="text-[11px] font-bold text-sky-600 dark:text-sky-400 flex items-center gap-1 truncate max-w-[200px] sm:max-w-[240px]">
+                <span>🧼 {branding.laundryName || 'LaundryKu Pro'}</span>
               </p>
             </div>
           </button>

@@ -37,7 +37,8 @@ export default function MobileEmulator({
   notifications = [],
   onRedeemReward,
   onSubmitReview,
-  onSwitchToAdmin
+  onSwitchToAdmin,
+  branding = {}
 }) {
   const [copiedPromo, setCopiedPromo] = useState('');
   const [orderFilter, setOrderFilter] = useState('all'); // all, active, completed
@@ -94,6 +95,7 @@ export default function MobileEmulator({
             onOpenNotifs={() => setShowNotifModal(true)}
             unreadNotifCount={unreadNotifCount}
             onSwitchToAdmin={onSwitchToAdmin}
+            branding={branding}
           />
         );
       case 'create_order':

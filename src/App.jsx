@@ -1197,6 +1197,7 @@ export default function App() {
               onRedeemReward={handleRedeemReward}
               onSubmitReview={handleAddReview}
               onSwitchToAdmin={() => setActiveView('web')}
+              branding={currentTenant?.branding || {}}
             />
           </div>
         ) : (
