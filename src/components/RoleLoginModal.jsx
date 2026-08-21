@@ -69,6 +69,15 @@ export default function RoleLoginModal({ roleKey, tenants = DEFAULT_TENANTS, onA
     // Normalize input to find matching tenant cleanly
     const inputClean = emailOrPhone.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
     
+    // Check if logging in as Super Admin Master
+    if (inputClean.includes('admin') || inputClean === '081234567890' || roleKey === 'super_admin') {
+      setTimeout(() => {
+        setIsLoading(false);
+        onAuthenticate('super_admin', 'TNT-001');
+      }, 400);
+      return;
+    }
+
     // Find matching tenant based on phone, email, ownerName, or businessName
     const matchedTenant = tenants.find(t => {
       const phoneClean = (t.ownerPhone || '').replace(/[^0-9]/g, '');

@@ -1120,9 +1120,13 @@ export default function App() {
           <RoleLoginModal
             roleKey={activeView}
             tenants={tenants}
-            onAuthenticate={(roleKey, tenantId) => {
+            onAuthenticate={(authRole, tenantId) => {
               if (tenantId) setCurrentTenantId(tenantId);
-              setAuthenticatedRoles(prev => ({ ...prev, [roleKey]: true }));
+              setAuthenticatedRoles(prev => ({ ...prev, [authRole]: true }));
+              if (authRole === 'super_admin') {
+                setActiveView('super_admin');
+                navigateToModule('super_admin');
+              }
             }}
             onCancel={() => setActiveView('saas_landing')}
             isDark={theme === 'dark'}
