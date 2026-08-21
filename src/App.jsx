@@ -1115,17 +1115,15 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <main className="flex-1 overflow-y-auto relative bg-gradient-to-b from-slate-100 to-sky-50/40">
-        {/* Role Authentication Guard for Protected Portals */}
-        {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] && (
+        {/* Strict Role Authentication Guard for Protected Portals */}
+        {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] ? (
           <RoleLoginModal
             roleKey={activeView}
             onAuthenticate={(roleKey) => setAuthenticatedRoles(prev => ({ ...prev, [roleKey]: true }))}
             onCancel={() => setActiveView('saas_landing')}
             isDark={theme === 'dark'}
           />
-        )}
-
-        {activeView === 'saas_landing' ? (
+        ) : activeView === 'saas_landing' ? (
           <SaaSLandingPage
             onTryDemoPos={() => setActiveView('web')}
             onOpenSuperAdmin={() => setActiveView('super_admin')}
