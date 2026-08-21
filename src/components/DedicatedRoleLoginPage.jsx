@@ -112,7 +112,7 @@ export default function DedicatedRoleLoginPage({
 
   const currentRole = roleConfigs[roleKey] || roleConfigs.owner_mobile;
 
-  // Handle Submit Form
+  // Handle Strict Submit Form
   const handleLoginSubmit = (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -123,57 +123,102 @@ export default function DedicatedRoleLoginPage({
       return;
     }
 
-    if (!password || password.length < 4) {
-      setErrorMsg('Kata sandi / PIN minimal 4 karakter (PIN Demo: 1234).');
+    if (!password) {
+      setErrorMsg('Silakan masukkan kata sandi / PIN Anda.');
       return;
     }
 
     setIsLoading(true);
 
     const inputClean = inputVal.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const passwordClean = password.trim();
 
-    // Super Admin Master
-    if (roleKey === 'super_admin' || inputClean.includes('admin') || inputClean === '081234567890') {
+    // 1. STRICT SUPER ADMIN VALIDATION
+    if (roleKey === 'super_admin') {
+      const validAdminIdentifiers = ['admin@laundryku.id', '081234567890', 'admin', 'superadmin'];
+      const isValidAdminUser = validAdminIdentifiers.some(id => inputClean === id.replace(/[^a-z0-9]/g, ''));
+      const isValidAdminPass = ['1234', 'admin123', 'laundryku2026'].includes(passwordClean);
+
       setTimeout(() => {
         setIsLoading(false);
-        onLoginSuccess('super_admin', 'TNT-001');
+        if (isValidAdminUser && isValidAdminPass) {
+          onLoginSuccess('super_admin', 'TNT-001');
+        } else {
+          setErrorMsg('Kredensial Super Admin salah! Gunakan Email: admin@laundryku.id dan PIN: 1234');
+        }
       }, 500);
       return;
     }
 
-    // Customer
+    // 2. STRICT CUSTOMER VALIDATION
     if (roleKey === 'mobile') {
       const matchedCustomer = (customers || []).find(c => {
         const phoneClean = (c.phone || '').replace(/[^0-9]/g, '');
-        const emailClean = (c.email || '').toLowerCase();
-        return (phoneClean && inputClean.includes(phoneClean)) || (emailClean && inputClean.includes(emailClean));
+        const emailClean = (c.email || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        return (phoneClean && inputClean === phoneClean) || (emailClean && inputClean === emailClean);
       });
+
+      const isValidCustomerPass = ['1234', 'customer123', 'aisyah123'].includes(passwordClean);
 
       setTimeout(() => {
         setIsLoading(false);
-        onLoginSuccess('mobile', 'TNT-001', matchedCustomer?.id || 'CUST-001');
+        if (matchedCustomer && isValidCustomerPass) {
+          onLoginSuccess('mobile', 'TNT-001', matchedCustomer.id);
+        } else if (!matchedCustomer) {
+          setErrorMsg(`Nomor WhatsApp/Email "${inputVal}" belum terdaftar sebagai pelanggan. Silakan daftar terlebih dahulu.`);
+        } else {
+          setErrorMsg('Kata sandi / PIN yang Anda masukkan salah. (PIN Demo: 1234)');
+        }
       }, 500);
       return;
     }
 
-    // Match Partner Tenant
-    const matchedTenant = tenants.find(t => {
+    // 3. STRICT COURIER VALIDATION
+    if (roleKey === 'courier_app') {
+      const validCourierPhones = ['081399881122', '081277665544', '081399882233'];
+      const isMatchedCourier = validCourierPhones.some(p => p.replace(/[^0-9]/g, '') === inputClean) ||
+                               inputClean.includes('kurir') || inputClean.includes('driver');
+      const isValidCourierPass = ['1234', 'kurir123'].includes(passwordClean);
+
+      setTimeout(() => {
+        setIsLoading(false);
+        if (isMatchedCourier && isValidCourierPass) {
+          onLoginSuccess('courier_app', 'TNT-001');
+        } else if (!isMatchedCourier) {
+          setErrorMsg(`Nomor Kurir "${inputVal}" tidak ditemukan dalam sistem. Gunakan No. WA Kurir Demo: 0813-9988-1122`);
+        } else {
+          setErrorMsg('Kata sandi / PIN Kurir salah. (PIN Demo: 1234)');
+        }
+      }, 500);
+      return;
+    }
+
+    // 4. STRICT OWNER & KASIR POS VALIDATION
+    const matchedTenant = (tenants || []).find(t => {
       const phoneClean = (t.ownerPhone || '').replace(/[^0-9]/g, '');
       const nameClean = (t.ownerName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const businessClean = (t.businessName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const idClean = (t.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
       return (
-        (phoneClean && (inputClean.includes(phoneClean) || phoneClean.includes(inputClean))) ||
-        (nameClean && inputClean.includes(nameClean)) ||
-        (businessClean && inputClean.includes(businessClean)) ||
+        (phoneClean && (inputClean === phoneClean || inputClean.endsWith(phoneClean) || phoneClean.endsWith(inputClean))) ||
+        (nameClean && inputClean === nameClean) ||
+        (businessClean && inputClean === businessClean) ||
         (idClean && inputClean === idClean)
       );
-    }) || tenants[0];
+    });
+
+    const isValidTenantPass = ['1234', 'owner123', 'kasir123', 'admin123'].includes(passwordClean);
 
     setTimeout(() => {
       setIsLoading(false);
-      onLoginSuccess(roleKey, matchedTenant?.id || 'TNT-001');
+      if (matchedTenant && isValidTenantPass) {
+        onLoginSuccess(roleKey, matchedTenant.id);
+      } else if (!matchedTenant) {
+        setErrorMsg(`Akun Mitra "${inputVal}" tidak terdaftar. Silakan daftar trial 14 hari atau gunakan No. WA Demo: 089650846031`);
+      } else {
+        setErrorMsg('Kata sandi / PIN yang Anda masukkan salah. (PIN Demo: 1234)');
+      }
     }, 500);
   };
 
