@@ -58,9 +58,7 @@ export class AutoManager {
           owner_name: tenantData.ownerName,
           owner_phone: tenantData.ownerPhone,
           plan_id: tenantData.planId,
-          status: tenantData.status,
-          monthly_fee: tenantData.monthlyFee,
-          branding: tenantData.branding
+          status: tenantData.status
         });
       }
     } catch (e) {

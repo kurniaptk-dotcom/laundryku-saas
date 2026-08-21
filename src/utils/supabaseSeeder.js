@@ -21,18 +21,8 @@ export const seedSupabaseData = async () => {
       business_name: t.businessName,
       owner_name: t.ownerName,
       owner_phone: t.ownerPhone,
-      city: t.city || 'Indonesia',
       plan_id: t.planId,
-      plan_name: t.planName,
-      monthly_fee: t.monthlyFee,
-      status: t.status,
-      join_date: t.joinDate,
-      expiry_date: t.expiryDate,
-      branches_count: t.branchesCount,
-      total_orders_processed: t.totalOrdersProcessed,
-      total_revenue_processed: t.totalRevenueProcessed,
-      whatsapp_quota_used: t.whatsappQuotaUsed,
-      branding: t.branding
+      status: t.status
     }));
 
     const { error: tenantErr } = await supabase.from('tenants').upsert(tenantInserts);
