@@ -17,7 +17,10 @@ export default class ErrorBoundary extends React.Component {
   }
 
   handleReset = () => {
-    localStorage.clear();
+    // Keep unrelated data on the same browser origin intact.
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith('laundry_'))
+      .forEach((key) => localStorage.removeItem(key));
     window.location.reload();
   };
 

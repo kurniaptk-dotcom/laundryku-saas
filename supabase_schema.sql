@@ -107,9 +107,18 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.machines ENABLE ROW LEVEL SECURITY;
 
--- CREATE PERMISSIVE POLICIES FOR INITIAL SETUP
-CREATE POLICY "Allow public read-write for demo setup" ON public.tenants FOR ALL USING (true);
-CREATE POLICY "Allow public read-write for demo setup" ON public.customers FOR ALL USING (true);
-CREATE POLICY "Allow public read-write for demo setup" ON public.orders FOR ALL USING (true);
-CREATE POLICY "Allow public read-write for demo setup" ON public.services FOR ALL USING (true);
-CREATE POLICY "Allow public read-write for demo setup" ON public.machines FOR ALL USING (true);
+-- SECURITY BASELINE
+-- Do not add permissive `USING (true)` policies here. With RLS enabled and no
+-- policies, anonymous requests are denied by default. Add tenant-scoped
+-- policies only after Supabase Auth and a tenant-membership model are in place.
+DROP POLICY IF EXISTS "Allow public read-write for demo setup" ON public.tenants;
+DROP POLICY IF EXISTS "Allow public read-write for demo setup" ON public.customers;
+DROP POLICY IF EXISTS "Allow public read-write for demo setup" ON public.orders;
+DROP POLICY IF EXISTS "Allow public read-write for demo setup" ON public.services;
+DROP POLICY IF EXISTS "Allow public read-write for demo setup" ON public.machines;
+--
+-- Recommended next migration:
+--   1. Add public.tenant_members (tenant_id, user_id, role).
+--   2. Add policies checking that auth.uid() belongs to tenant_members for the
+--      row's tenant_id.
+--   3. Use a server-side service role for controlled onboarding/seeding only.

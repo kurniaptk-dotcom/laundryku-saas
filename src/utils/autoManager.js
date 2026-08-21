@@ -20,8 +20,9 @@ export class AutoManager {
 
     console.log('🚀 [Autopilot Manager] System Initializing...');
 
-    // 1. Check Supabase Connectivity & Trigger Auto-Seeding
-    if (isSupabaseConfigured()) {
+    // Never write demo records from every client session. Seeding is opt-in and
+    // should only be enabled in a disposable development environment.
+    if (isSupabaseConfigured() && import.meta.env.VITE_ENABLE_DEMO_SEED === 'true') {
       try {
         const seedResult = await seedSupabaseData();
         if (seedResult.success) {

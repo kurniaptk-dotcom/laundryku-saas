@@ -256,16 +256,16 @@ export default function SaaSLandingPage({
             <span className="hidden md:inline">{isDark ? 'Mode Terang' : 'Mode Gelap'}</span>
           </button>
 
-          {/* Masuk Portal Mitra Button */}
+          {/* Primary public entry: owner onboarding */}
           <button
-            onClick={onTryDemoPos}
+            onClick={onOpenOwnerMobile}
             className={`px-3.5 sm:px-4 py-2 text-xs font-black rounded-xl border transition-all flex items-center gap-1.5 ${
               isDark 
                 ? 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700' 
                 : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 shadow-xs'
             }`}
           >
-            <span>🔐 Masuk Portal Mitra</span>
+            <span>👑 Portal Pemilik</span>
           </button>
 
           <button
@@ -319,6 +319,40 @@ export default function SaaSLandingPage({
                   isDark ? 'bg-slate-800 border-slate-700 text-slate-300' : 'bg-white border-slate-200 text-slate-700 shadow-xs'
                 }`}>{feat}</span>
               ))}
+            </div>
+
+            {/* Clear public entry points. Each visitor chooses their own app,
+                rather than moving through a mixed demo switcher. */}
+            <div className="space-y-2.5 pt-1">
+              <p className={`text-xs font-black uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                Masuk sesuai peran Anda
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <button
+                  onClick={onOpenOwnerMobile}
+                  className="p-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white text-left shadow-clay-sm transition-all"
+                >
+                  <span className="block text-lg">👑</span>
+                  <span className="block text-xs font-black mt-1">Saya Pemilik</span>
+                  <span className="block text-[10px] text-indigo-100 font-semibold mt-0.5">Kelola gerai & laporan</span>
+                </button>
+                <button
+                  onClick={onOpenConsumerApp}
+                  className="p-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-sky-600 hover:opacity-95 text-white text-left shadow-clay-sm transition-all"
+                >
+                  <span className="block text-lg">📱</span>
+                  <span className="block text-xs font-black mt-1">Saya Pelanggan</span>
+                  <span className="block text-[10px] text-teal-100 font-semibold mt-0.5">Pesan & lacak cucian</span>
+                </button>
+                <button
+                  onClick={onOpenCourierApp}
+                  className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-95 text-white text-left shadow-clay-sm transition-all"
+                >
+                  <span className="block text-lg">🛵</span>
+                  <span className="block text-xs font-black mt-1">Saya Kurir</span>
+                  <span className="block text-[10px] text-amber-100 font-semibold mt-0.5">Jemput & antar pesanan</span>
+                </button>
+              </div>
             </div>
 
             {/* CTA Buttons */}

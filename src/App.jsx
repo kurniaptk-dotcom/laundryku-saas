@@ -54,6 +54,8 @@ export default function App() {
   // Unified Role Logout Handler
   const handleRoleLogout = (roleKeyToLogout) => {
     setAuthenticatedRoles(prev => ({ ...prev, [roleKeyToLogout]: false }));
+    setActiveView('saas_landing');
+    navigateToModule('saas_landing');
     triggerToast('Sesi Berakhir', 'Anda telah berhasil keluar dari portal.', 'info');
   };
 
@@ -942,7 +944,9 @@ export default function App() {
 
   const handleResetDemoData = () => {
     if (window.confirm('Reset seluruh data demo ke kondisi awal bawaan?')) {
-      localStorage.clear();
+      Object.keys(localStorage)
+        .filter((key) => key.startsWith('laundry_'))
+        .forEach((key) => localStorage.removeItem(key));
       setCustomers(defaultCustomers);
       setCurrentCustomerId('CUST-001');
       setServices(defaultServices);
@@ -1053,14 +1057,14 @@ export default function App() {
           {/* View Switcher Tabs (Protected Navigation) */}
           <div className="flex bg-slate-100 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border border-slate-200 shadow-inner flex-shrink-0 gap-0.5 overflow-x-auto no-scrollbar max-w-full">
             <button
-              onClick={() => setActiveView('saas_landing')}
+              onClick={() => handleSwitchView('saas_landing')}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-black text-slate-600 hover:text-primary hover:bg-white transition-all"
             >
               <Globe className="w-3.5 h-3.5 text-primary" />
               <span>🌐 Halaman Depan SaaS</span>
             </button>
             <button
-              onClick={() => setActiveView('web')}
+              onClick={() => handleSwitchView('web')}
               className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-[11px] font-black transition-all ${
                 activeView === 'web'
                   ? 'bg-primary text-white shadow-clay-sm'
@@ -1071,7 +1075,7 @@ export default function App() {
               <span>💻 Kasir POS</span>
             </button>
             <button
-              onClick={() => setActiveView('owner_mobile')}
+              onClick={() => handleSwitchView('owner_mobile')}
               className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-[11px] font-black transition-all ${
                 activeView === 'owner_mobile'
                   ? 'bg-indigo-600 text-white shadow-clay-sm'
@@ -1082,7 +1086,7 @@ export default function App() {
               <span>👑 ERP Owner</span>
             </button>
             <button
-              onClick={() => setActiveView('courier_app')}
+              onClick={() => handleSwitchView('courier_app')}
               className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-[11px] font-black transition-all ${
                 activeView === 'courier_app'
                   ? 'bg-amber-600 text-white shadow-clay-sm'
@@ -1093,7 +1097,7 @@ export default function App() {
               <span>🛵 Kurir Radar</span>
             </button>
             <button
-              onClick={() => setActiveView('mobile')}
+              onClick={() => handleSwitchView('mobile')}
               className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-[11px] font-black transition-all ${
                 activeView === 'mobile'
                   ? 'bg-primary text-white shadow-clay-sm'
@@ -1104,7 +1108,7 @@ export default function App() {
               <span>📱 Konsumen</span>
             </button>
             <button
-              onClick={() => setActiveView('super_admin')}
+              onClick={() => handleSwitchView('super_admin')}
               className={`flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg text-[11px] font-black transition-all ${
                 activeView === 'super_admin'
                   ? 'bg-slate-900 text-white shadow-clay-sm'
@@ -1143,25 +1147,20 @@ export default function App() {
             onLoginSuccess={(authRole, tenantId, customerId) => {
               if (tenantId) setCurrentTenantId(tenantId);
               if (customerId) setCurrentCustomerId(customerId);
+              if (authRole === 'mobile') setIsLoggedIn(true);
               setAuthenticatedRoles(prev => ({ ...prev, [authRole]: true }));
-              if (authRole === 'super_admin') {
-                setActiveView('super_admin');
-                navigateToModule('super_admin');
-              }
+              handleSwitchView(authRole);
             }}
-            onBackToLanding={() => {
-              setActiveView('saas_landing');
-              navigateToModule('saas_landing');
-            }}
+            onBackToLanding={() => handleSwitchView('saas_landing')}
             isDark={theme === 'dark'}
           />
         ) : activeView === 'saas_landing' ? (
           <SaaSLandingPage
-            onTryDemoPos={() => setActiveView('web')}
-            onOpenSuperAdmin={() => setActiveView('super_admin')}
-            onOpenOwnerMobile={() => setActiveView('owner_mobile')}
-            onOpenCourierApp={() => setActiveView('courier_app')}
-            onOpenConsumerApp={() => setActiveView('mobile')}
+            onTryDemoPos={() => handleSwitchView('web')}
+            onOpenSuperAdmin={() => handleSwitchView('super_admin')}
+            onOpenOwnerMobile={() => handleSwitchView('owner_mobile')}
+            onOpenCourierApp={() => handleSwitchView('courier_app')}
+            onOpenConsumerApp={() => handleSwitchView('mobile')}
             onRegisterTenant={handleRegisterTenant}
             theme={theme}
             onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
@@ -1171,8 +1170,8 @@ export default function App() {
             tenants={tenants}
             onUpdateTenants={handleUpdateTenants}
             onSelectTenantToManage={handleSelectTenantToManage}
-            onSwitchToLanding={() => setActiveView('saas_landing')}
-            onSwitchToMobile={() => setActiveView('mobile')}
+            onSwitchToLanding={() => handleSwitchView('saas_landing')}
+            onSwitchToMobile={() => handleSwitchView('mobile')}
             onLogout={() => handleRoleLogout('super_admin')}
             theme={theme}
             onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
@@ -1185,7 +1184,7 @@ export default function App() {
               couriers={couriers}
               onUpdateOrderStatus={handleUpdateOrderStatus}
               branding={currentTenant?.branding || {}}
-              onSwitchRole={setActiveView}
+              onSwitchRole={handleSwitchView}
               onLogout={() => handleRoleLogout('courier_app')}
               theme={theme}
               onToggleTheme={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
@@ -1201,7 +1200,7 @@ export default function App() {
               staffList={staffList}
               reviews={reviews}
               branding={currentTenant?.branding || {}}
-              onSwitchToFullWeb={() => setActiveView('web')}
+              onSwitchToFullWeb={() => handleSwitchView('web')}
               onOpenBrandingSettings={() => setIsBrandingModalOpen(true)}
               onLogout={() => handleRoleLogout('owner_mobile')}
               theme={theme}
@@ -1213,7 +1212,7 @@ export default function App() {
             <MobileEmulator
               isLoggedIn={isLoggedIn}
               onLogin={handleLogin}
-              onLogout={() => handleRoleLogout('mobile')}
+              onLogout={handleLogout}
               onRegister={handleRegister}
               currentCustomer={currentCustomer}
               customers={customers}
@@ -1291,11 +1290,11 @@ export default function App() {
             onEditMachine={handleEditMachine}
             onDeleteMachine={handleDeleteMachine}
             onResetDemoData={handleResetDemoData}
-            onSwitchToMobile={() => setActiveView('mobile')}
+            onSwitchToMobile={() => handleSwitchView('mobile')}
             onLogout={() => handleRoleLogout('web')}
             branding={currentTenant?.branding || {}}
             onOpenBrandingSettings={() => setIsBrandingModalOpen(true)}
-            onOpenSuperAdmin={() => setActiveView('super_admin')}
+            onOpenSuperAdmin={() => handleSwitchView('super_admin')}
             currentTenant={currentTenant}
           />
         )}

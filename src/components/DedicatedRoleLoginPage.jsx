@@ -239,7 +239,7 @@ export default function DedicatedRoleLoginPage({
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
-        onLoginSuccess(roleKey, 'TNT-001');
+        setErrorMsg('Pendaftaran akun tidak dapat dilakukan dari portal peran. Silakan kembali ke halaman utama dan pilih "Daftar Trial 14 Hari" agar tenant baru dibuat dengan benar.');
       }, 700);
     }
   };

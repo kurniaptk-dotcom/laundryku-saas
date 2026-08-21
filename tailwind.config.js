@@ -36,6 +36,11 @@ export default {
         'soft-lg': '0 10px 30px -5px rgba(15, 23, 42, 0.08)',
         'phone': '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
       },
+      zIndex: {
+        55: '55',
+        60: '60',
+        70: '70',
+      },
       animation: {
         'spin-slow': 'spin 8s linear infinite',
         'bounce-slow': 'bounce 3s infinite',

@@ -1,14 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Environment variables with fallback to user's configured Supabase project
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://rgjpfwlyfuzwzowgdkgu.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnanBmd2x5ZnV6d3pvd2dka2d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyNTE4NDIsImV4cCI6MjEwMjgyNzg0Mn0.O3fOsBBVGh9rt516EhmOxROIixClRgDMAsVmrn5RwXs';
+// Cloud persistence is intentionally opt-in. Never silently connect a deployed
+// build to a shared project through hard-coded credentials.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Create active Supabase client instance
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Create a client only when the deployment explicitly supplies its credentials.
+export const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 export const isSupabaseConfigured = () => {
-  return !!supabase;
+  return Boolean(supabase);
 };
 
 // Helper for Realtime Syncing Orders across POS, Owner, Courier & Consumer
@@ -36,6 +39,7 @@ export const subscribeToOrders = (tenantId, onOrderUpdate) => {
 
 // Helper for fetching Tenants from Supabase
 export const fetchTenantsFromSupabase = async () => {
+  if (!supabase) return null;
   try {
     const { data, error } = await supabase.from('tenants').select('*').order('created_at', { ascending: false });
     if (error) {
