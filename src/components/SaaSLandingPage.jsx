@@ -100,13 +100,19 @@ export default function SaaSLandingPage({
     return () => clearInterval(wTimer);
   }, []);
 
-  // Form State
+  // Form & Registration Lifecycle State
   const [formName, setFormName] = useState('');
   const [formBusiness, setFormBusiness] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formCity, setFormCity] = useState('');
   const [formPaymentMethod, setFormPaymentMethod] = useState('trial'); // 'trial' | 'qris' | 'va'
   const [selectedVaBank, setSelectedVaBank] = useState('bca'); // 'bca' | 'mandiri' | 'bri' | 'bni'
+
+  // Realistic Onboarding Steps: 'form' | 'provisioning' | 'success_ticket'
+  const [trialStep, setTrialStep] = useState('form');
+  const [provisioningProgress, setProvisioningProgress] = useState(0);
+  const [provisioningText, setProvisioningText] = useState('Memvalidasi Data Usaha...');
+  const [createdTenantData, setCreatedTenantData] = useState(null);
 
   // Auto tick IoT timer for lively feel
   useEffect(() => {
@@ -137,13 +143,15 @@ export default function SaaSLandingPage({
 
   const handleOpenTrial = (plan) => {
     setSelectedPlanForTrial(plan);
+    setTrialStep('form');
+    setProvisioningProgress(0);
     setShowTrialModal(true);
   };
 
   const handleTrialSubmit = (e) => {
     e.preventDefault();
     if (!formName || !formBusiness || !formPhone) {
-      alert('Mohon lengkapi nama, nama usaha, dan nomor WhatsApp!');
+      alert('Mohon lengkapi nama pemilik, nama usaha laundry, dan nomor WhatsApp!');
       return;
     }
 
@@ -173,8 +181,30 @@ export default function SaaSLandingPage({
       }
     };
 
-    if (onRegisterTenant) {
-      onRegisterTenant(newTenant);
+    setCreatedTenantData(newTenant);
+    setTrialStep('provisioning');
+    setProvisioningProgress(15);
+    setProvisioningText('⚡ Memvalidasi Identitas & Nomor WhatsApp Mitra...');
+
+    setTimeout(() => {
+      setProvisioningProgress(55);
+      setProvisioningText('☁️ Mengalokasikan Database Supabase Cloud Multi-Tenant...');
+    }, 600);
+
+    setTimeout(() => {
+      setProvisioningProgress(90);
+      setProvisioningText('🔑 Mengaktifkan Lisensi 14 Hari & Kredensial ERP...');
+    }, 1200);
+
+    setTimeout(() => {
+      setProvisioningProgress(100);
+      setTrialStep('success_ticket');
+    }, 1800);
+  };
+
+  const handleLaunchPartnerPortal = (targetView) => {
+    if (onRegisterTenant && createdTenantData) {
+      onRegisterTenant(createdTenantData, targetView);
     }
     setShowTrialModal(false);
   };
@@ -3222,210 +3252,228 @@ export default function SaaSLandingPage({
         </p>
       </footer>
 
-      {/* 11. Modal Pendaftaran Trial 14 Hari */}
+      {/* 11. Modal Pendaftaran Trial 14 Hari & Onboarding */}
       {showTrialModal && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-          <div className={`w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-5 shadow-2xl border animate-scale-up ${
+          <div className={`w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl border animate-scale-up ${
             isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
           }`}>
-            <div className="flex justify-between items-start pb-3 border-b border-slate-200/60">
-              <div>
-                <span className="px-2 py-0.5 bg-sky-50 text-primary border border-sky-200 text-[10px] font-black rounded-full">
-                  14 HARI FREE TRIAL
-                </span>
-                <h3 className={`text-lg font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                  Daftar Akun Laundry Baru
-                </h3>
-                <p className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                  Paket: <strong className="text-primary">{selectedPlanForTrial?.name || 'Pro Unlimited'}</strong>
-                </p>
-              </div>
-              <button
-                onClick={() => setShowTrialModal(false)}
-                className={`p-1.5 rounded-lg ${isDark ? 'text-slate-400 hover:text-white' : 'text-slate-400 hover:text-slate-700'}`}
-              >
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleTrialSubmit} className="space-y-3.5">
-              <div className="space-y-1">
-                <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Nama Lengkap Pemilik Laundry:
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  placeholder="Contoh: Budi Pratama"
-                  className={`w-full border rounded-xl px-3.5 py-2 text-xs transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                    isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400 shadow-xs'
-                  }`}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                    Nama Outlet / Brand:
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formBusiness}
-                    onChange={(e) => setFormBusiness(e.target.value)}
-                    placeholder="Contoh: Berkah Clean"
-                    className={`w-full border rounded-xl px-3.5 py-2 text-xs transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                      isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400 shadow-xs'
-                    }`}
-                  />
+            
+            {/* STEP 1: FORM PENDAFTARAN */}
+            {trialStep === 'form' && (
+              <>
+                <div className="flex justify-between items-start pb-3 border-b border-slate-200/60 dark:border-slate-800">
+                  <div>
+                    <span className="px-2.5 py-0.5 bg-sky-50 text-primary border border-sky-200 text-[10px] font-black rounded-full uppercase tracking-wider">
+                      14 HARI FREE TRIAL
+                    </span>
+                    <h3 className={`text-xl font-black mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      Daftar Akun Laundry Baru
+                    </h3>
+                    <p className={`text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                      Paket Terpilih: <strong className="text-primary font-black">{selectedPlanForTrial?.name || 'Pro Unlimited'}</strong>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowTrialModal(false)}
+                    className={`p-1.5 rounded-xl ${isDark ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'} transition-colors`}
+                  >
+                    ✕
+                  </button>
                 </div>
-                <div className="space-y-1">
-                  <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                    WhatsApp Aktif:
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formPhone}
-                    onChange={(e) => setFormPhone(e.target.value)}
-                    placeholder="0812-3456-7890"
-                    className={`w-full border rounded-xl px-3.5 py-2 text-xs transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
-                      isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-white border-slate-300 text-slate-900 placeholder-slate-400 shadow-xs'
-                    }`}
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                  Pilih Opsi Pembayaran Langganan:
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'trial', label: '14 Hari Trial', price: 'Rp 0', badge: 'GRATIS', icon: '🎁' },
-                    { id: 'qris', label: 'QRIS Instant', price: selectedPlanForTrial?.priceMonthly ? `Rp ${(selectedPlanForTrial.priceMonthly).toLocaleString('id-ID')}` : 'Rp 250rb', badge: 'INSTANT', icon: '📲' },
-                    { id: 'va', label: 'Virtual Account', price: 'BCA / Mandiri', badge: 'AUTO-CHECK', icon: '🏦' },
-                  ].map(m => {
-                    const isSelected = formPaymentMethod === m.id;
-                    return (
-                      <button
-                        type="button"
-                        key={m.id}
-                        onClick={() => setFormPaymentMethod(m.id)}
-                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer relative overflow-hidden ${
-                          isSelected
-                            ? 'border-2 border-primary bg-sky-50 dark:bg-sky-950/40 text-primary shadow-clay-sm scale-105 font-black ring-2 ring-primary/20'
-                            : isDark
-                              ? 'bg-slate-950 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
-                              : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 shadow-xs'
+                <form onSubmit={handleTrialSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      Nama Lengkap Pemilik Laundry:
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formName}
+                      onChange={(e) => setFormName(e.target.value)}
+                      placeholder="Contoh: Budi Pratama"
+                      className={`w-full border rounded-2xl px-4 py-3 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                        isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 shadow-xs'
+                      }`}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                        Nama Outlet / Brand Laundry:
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={formBusiness}
+                        onChange={(e) => setFormBusiness(e.target.value)}
+                        placeholder="Contoh: Berkah Clean Express"
+                        className={`w-full border rounded-2xl px-4 py-3 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                          isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 shadow-xs'
                         }`}
-                      >
-                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                          isSelected ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                        }`}>
-                          {m.badge}
-                        </span>
-                        <p className="text-xs font-black mt-1 flex items-center justify-center gap-1">
-                          <span>{m.icon}</span>
-                          <span>{m.label}</span>
-                        </p>
-                        <p className={`text-[10px] font-bold ${isSelected ? 'text-primary' : 'text-slate-400'}`}>{m.price}</p>
-                      </button>
-                    );
-                  })}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                        WhatsApp Aktif (Untuk Login & Notifikasi):
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        value={formPhone}
+                        onChange={(e) => setFormPhone(e.target.value)}
+                        placeholder="0812-3456-7890"
+                        className={`w-full border rounded-2xl px-4 py-3 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                          isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 shadow-xs'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className={`text-xs font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      Kota / Lokasi Gerai:
+                    </label>
+                    <input
+                      type="text"
+                      value={formCity}
+                      onChange={(e) => setFormCity(e.target.value)}
+                      placeholder="Contoh: Jakarta Pusat, Surabaya, Denpasar Bali"
+                      className={`w-full border rounded-2xl px-4 py-3 text-xs font-bold transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                        isDark ? 'bg-slate-950 border-slate-800 text-white placeholder-slate-500' : 'bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 shadow-xs'
+                      }`}
+                    />
+                  </div>
+
+                  <div className="p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-1">
+                    <p className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                      <span>✓ Akses Penuh 14 Hari Tanpa Kartu Kredit</span>
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">
+                      Setelah 14 hari, Anda dapat melanjutkan langganan bulanan tanpa kehilangan data transaksi.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowTrialModal(false)}
+                      className={`flex-1 py-3.5 rounded-2xl font-bold text-xs ${
+                        isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                      }`}
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex-1 py-3.5 bg-gradient-to-r from-sky-400 via-primary to-indigo-600 hover:opacity-95 text-white rounded-2xl font-black text-xs shadow-clay-sm flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <span>Aktifkan Akun Trial 14 Hari</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+
+            {/* STEP 2: PROVISIONING CLOUD DATABASE ANIMATION */}
+            {trialStep === 'provisioning' && (
+              <div className="py-8 text-center space-y-6 animate-fade-in">
+                <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-sky-400 via-primary to-indigo-600 flex items-center justify-center text-3xl shadow-clay-sm animate-bounce">
+                  ⚡
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-black tracking-tight">Menyiapkan Gerai Anda...</h3>
+                  <p className="text-xs font-semibold text-primary animate-pulse">{provisioningText}</p>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200 dark:border-slate-700">
+                  <div 
+                    className="bg-gradient-to-r from-sky-400 via-primary to-indigo-600 h-full rounded-full transition-all duration-500"
+                    style={{ width: `${provisioningProgress}%` }}
+                  ></div>
                 </div>
 
-                {/* DYNAMIC PAYMENT METHOD PREVIEW & DETAILS BOX */}
-                {formPaymentMethod === 'trial' && (
-                  <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-xs space-y-1">
-                    <p className="font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                      <span>✓ Aktivasi Instant 14 Hari Free Trial</span>
-                    </p>
-                    <p className="text-[11px] text-slate-500 font-bold">
-                      Tanpa perlu memasukkan kartu kredit atau DP. Langsung bisa digunakan untuk kasir & cetak struk!
-                    </p>
-                  </div>
-                )}
-
-                {formPaymentMethod === 'qris' && (
-                  <div className="p-3 rounded-2xl bg-sky-50 dark:bg-sky-950/30 border border-sky-200 dark:border-sky-900/50 text-xs space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-black text-sky-600 dark:text-sky-400">Pembayaran QRIS All Payment</p>
-                        <p className="text-[10px] text-slate-500 font-bold">BCA, Mandiri, GoPay, OVO, ShopeePay, Dana</p>
-                      </div>
-                      <span className="font-black text-xs text-emerald-600">
-                        Total: Rp {(selectedPlanForTrial?.priceMonthly || 250000).toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                    <div className="p-2 bg-white dark:bg-slate-900 rounded-xl border flex items-center gap-3">
-                      <div className="w-12 h-12 bg-slate-900 text-white rounded-lg flex items-center justify-center text-xl font-black flex-shrink-0">
-                        📲
-                      </div>
-                      <div className="text-[11px] font-bold space-y-0.5">
-                        <p className="text-slate-800 dark:text-slate-200">Scan Kode QRIS Setelah Klik Lanjut</p>
-                        <p className="text-emerald-500 font-black">Status: Menunggu Scan QRIS</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {formPaymentMethod === 'va' && (
-                  <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 text-xs space-y-2">
-                    <p className="font-black text-indigo-600 dark:text-indigo-400">Pilih Bank Virtual Account:</p>
-                    <div className="grid grid-cols-4 gap-1.5">
-                      {[
-                        { id: 'bca', name: 'BCA' },
-                        { id: 'mandiri', name: 'Mandiri' },
-                        { id: 'bri', name: 'BRI' },
-                        { id: 'bni', name: 'BNI' },
-                      ].map(b => (
-                        <button
-                          type="button"
-                          key={b.id}
-                          onClick={() => setSelectedVaBank(b.id)}
-                          className={`py-1 text-xs font-black rounded-lg border transition-all ${
-                            selectedVaBank === b.id
-                              ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                              : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200'
-                          }`}
-                        >
-                          {b.name}
-                        </button>
-                      ))}
-                    </div>
-                    <div className="p-2 bg-white dark:bg-slate-900 rounded-xl border flex justify-between items-center text-[11px]">
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase font-black">No. VA ({selectedVaBank.toUpperCase()}):</span>
-                        <p className="font-black text-slate-900 dark:text-white text-xs tracking-wider">88029{formPhone ? formPhone.slice(-6) : '812345'}</p>
-                      </div>
-                      <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 text-[10px] font-black rounded border border-emerald-500/20">Auto Check</span>
-                    </div>
-                  </div>
-                )}
+                <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
+                  <span>Inisialisasi Sistem</span>
+                  <span>{provisioningProgress}% Selesai</span>
+                </div>
               </div>
+            )}
 
-              <div className="pt-2 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowTrialModal(false)}
-                  className={`flex-1 py-2.5 rounded-xl font-bold text-xs ${
-                    isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-300' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-2.5 bg-gradient-to-r from-sky-400 via-primary to-indigo-600 hover:opacity-95 text-white rounded-xl font-black text-xs shadow-clay-sm flex items-center justify-center gap-1.5"
-                >
-                  <span>Proses Langganan</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+            {/* STEP 3: SUCCESS ONBOARDING TICKET & LAUNCHPAD */}
+            {trialStep === 'success_ticket' && createdTenantData && (
+              <div className="space-y-6 animate-scale-up">
+                <div className="text-center space-y-2">
+                  <div className="w-16 h-16 mx-auto rounded-3xl bg-emerald-500 text-white flex items-center justify-center text-3xl shadow-clay-sm">
+                    🎉
+                  </div>
+                  <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                    Selamat, Gerai Anda Resmi Aktif!
+                  </h3>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Akun <strong>{createdTenantData.businessName}</strong> ({createdTenantData.ownerName}) telah terkonfigurasi.
+                  </p>
+                </div>
+
+                {/* Digital Ticket Card */}
+                <div className={`p-5 rounded-3xl border-2 border-dashed space-y-4 ${
+                  isDark ? 'bg-slate-950/60 border-slate-700 text-white' : 'bg-sky-50/50 border-sky-300 text-slate-900'
+                }`}>
+                  <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800">
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-slate-400">ID Gerai Resmi:</span>
+                      <p className="text-base font-black text-primary">{createdTenantData.id}</p>
+                    </div>
+                    <span className="px-3 py-1 bg-emerald-500 text-white text-xs font-black rounded-full shadow-xs">
+                      Aktif 14 Hari
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs font-semibold">
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold block">No. WhatsApp Login:</span>
+                      <strong className="text-slate-800 dark:text-slate-200">{createdTenantData.ownerPhone}</strong>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 font-bold block">PIN Akses Cepat:</span>
+                      <strong className="text-primary font-black">1234</strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gateway Launch Buttons */}
+                <div className="space-y-2.5">
+                  <p className="text-xs font-black text-center text-slate-500 uppercase tracking-wider">
+                    Pilih Gerbang Masuk Anda:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      onClick={() => handleLaunchPartnerPortal('owner_mobile')}
+                      className="p-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white font-black text-xs shadow-lg flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer group"
+                    >
+                      <span className="text-2xl group-hover:scale-110 transition-transform">👑</span>
+                      <span>Buka ERP Owner</span>
+                      <span className="text-[10px] font-semibold text-indigo-200">Pantau Omzet & Laporan</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleLaunchPartnerPortal('web')}
+                      className="p-4 rounded-2xl bg-gradient-to-r from-sky-500 to-primary hover:opacity-95 text-white font-black text-xs shadow-lg flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer group"
+                    >
+                      <span className="text-2xl group-hover:scale-110 transition-transform">💻</span>
+                      <span>Buka Kasir POS</span>
+                      <span className="text-[10px] font-semibold text-sky-200">Mulai Transaksi & Struk</span>
+                    </button>
+                  </div>
+                </div>
               </div>
-            </form>
+            )}
+
           </div>
         </div>
       )}

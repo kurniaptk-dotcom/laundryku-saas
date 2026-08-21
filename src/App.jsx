@@ -949,11 +949,36 @@ export default function App() {
     }
   };
 
-  const handleRegisterTenant = (newTenant) => {
+  const handleRegisterTenant = async (newTenant, targetView = 'owner_mobile') => {
     setTenants(prev => [newTenant, ...prev]);
     setCurrentTenantId(newTenant.id);
-    setActiveView('web');
-    triggerToast('🎉 Akun Trial Aktif!', `Selamat datang di LaundryKu Pro, ${newTenant.ownerName}! Akun Anda aktif selama 14 hari.`, 'success');
+    setAuthenticatedRoles(prev => ({ 
+      ...prev, 
+      [targetView]: true, 
+      owner_mobile: true, 
+      web: true 
+    }));
+    setActiveView(targetView);
+    navigateToModule(targetView);
+
+    // Save newly registered tenant to Supabase Cloud
+    try {
+      const { supabase } = await import('./utils/supabaseClient');
+      if (supabase) {
+        await supabase.from('tenants').upsert([{
+          id: newTenant.id,
+          business_name: newTenant.businessName,
+          owner_name: newTenant.ownerName,
+          owner_phone: newTenant.ownerPhone,
+          plan_id: newTenant.planId,
+          status: 'trial'
+        }]);
+      }
+    } catch (err) {
+      console.warn('Supabase sync warning:', err);
+    }
+
+    triggerToast('🎉 Akun Trial Aktif!', `Selamat datang ${newTenant.ownerName}! Gerai ${newTenant.businessName} resmi aktif 14 hari.`, 'success');
   };
 
   const handleUpdateTenants = (updatedList) => {
