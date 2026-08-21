@@ -7,7 +7,7 @@ import SuperAdminDashboard from './components/SuperAdminDashboard';
 import TenantSettingsModal from './components/TenantSettingsModal';
 import SmartCourierApp from './components/screens/SmartCourierApp';
 import SmartOwnerMobile from './components/screens/SmartOwnerMobile';
-import RoleLoginModal from './components/RoleLoginModal';
+import DedicatedRoleLoginPage from './components/DedicatedRoleLoginPage';
 import { Smartphone, Monitor, Info, Sparkles, Check, Bell, X, AlertCircle, RefreshCw, UserCheck, Globe, Building2, Crown, Truck, User, Sun, Moon } from 'lucide-react';
 import { calculateTier } from './utils/tierHelper';
 import { createSubscriptionInstance, isSubscriptionActive, SUBSCRIPTION_PLANS } from './utils/subscriptionHelper';
@@ -1115,12 +1115,12 @@ export default function App() {
 
       {/* Main Workspace Frame */}
       <main className="flex-1 overflow-y-auto relative bg-gradient-to-b from-slate-100 to-sky-50/40">
-        {/* Strict Role Authentication Guard for Protected Portals */}
+        {/* Full-Page Dedicated Role Login Portals */}
         {activeView !== 'saas_landing' && activeView !== 'mobile' && !authenticatedRoles[activeView] ? (
-          <RoleLoginModal
+          <DedicatedRoleLoginPage
             roleKey={activeView}
             tenants={tenants}
-            onAuthenticate={(authRole, tenantId) => {
+            onLoginSuccess={(authRole, tenantId) => {
               if (tenantId) setCurrentTenantId(tenantId);
               setAuthenticatedRoles(prev => ({ ...prev, [authRole]: true }));
               if (authRole === 'super_admin') {
@@ -1128,7 +1128,10 @@ export default function App() {
                 navigateToModule('super_admin');
               }
             }}
-            onCancel={() => setActiveView('saas_landing')}
+            onBackToLanding={() => {
+              setActiveView('saas_landing');
+              navigateToModule('saas_landing');
+            }}
             isDark={theme === 'dark'}
           />
         ) : activeView === 'saas_landing' ? (
