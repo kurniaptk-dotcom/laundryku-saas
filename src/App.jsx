@@ -992,8 +992,8 @@ export default function App() {
         </div>
       )}
 
-      {/* 2. Top Demo Navigation Bar (SHOWN ONLY WHEN TESTING POS/ADMIN/APPS, HIDDEN ON PUBLIC SAAS LANDING PAGE) */}
-      {activeView !== 'saas_landing' && (
+      {/* 2. Top Navigation Bar (SHOWN ONLY TO AUTHENTICATED SUPER ADMIN FOR MASTER CONTROL) */}
+      {authenticatedRoles.super_admin && activeView !== 'saas_landing' && (
         <header className="bg-white border-b border-slate-200 px-3 sm:px-6 py-2.5 sm:py-3 flex justify-between items-center shadow-soft z-50 flex-shrink-0 gap-2">
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-sky-400 via-primary to-indigo-600 flex items-center justify-center text-white text-lg sm:text-xl shadow-clay-sm">
