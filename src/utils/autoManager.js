@@ -6,6 +6,7 @@
 
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { DEFAULT_TENANTS } from './saasHelper';
+import { seedSupabaseData } from './supabaseSeeder';
 
 export class AutoManager {
   static isInitialized = false;
@@ -19,14 +20,14 @@ export class AutoManager {
 
     console.log('🚀 [Autopilot Manager] System Initializing...');
 
-    // 1. Check Supabase Connectivity
+    // 1. Check Supabase Connectivity & Trigger Auto-Seeding
     if (isSupabaseConfigured()) {
       try {
-        const { data, error } = await supabase.from('tenants').select('count', { count: 'exact' });
-        if (!error) {
-          console.log('✅ [Autopilot Manager] Supabase Cloud Database Active & Connected!');
+        const seedResult = await seedSupabaseData();
+        if (seedResult.success) {
+          console.log('✅ [Autopilot Manager] Supabase Cloud Database Fully Synced & Seeded!');
         } else {
-          console.log('ℹ️ [Autopilot Manager] Supabase standby, using Automated Persistent Store Engine.');
+          console.log('ℹ️ [Autopilot Manager] Standby mode active. Table schema pending 1-click SQL creation.');
         }
       } catch (err) {
         console.warn('⚠️ [Autopilot Manager] Cloud database standing by:', err);
