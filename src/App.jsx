@@ -1093,23 +1093,6 @@ export default function App() {
               {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-300" /> : <Moon className="w-3.5 h-3.5 text-slate-600" />}
               <span className="hidden lg:inline">{theme === 'light' ? 'Mode Terang' : 'Mode Gelap'}</span>
             </button>
-
-            {isLoggedIn && (
-              <div className="hidden lg:flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-2xl">
-                <span className="text-[10px] font-black text-slate-400 uppercase">Akun:</span>
-                <select
-                  value={currentCustomer.id}
-                  onChange={(e) => setCurrentCustomerId(e.target.value)}
-                  className="bg-transparent text-xs font-black text-slate-850 focus:outline-none cursor-pointer"
-                >
-                  {customers.map(c => (
-                    <option key={c.id} value={c.id}>
-                      👤 {c.name} ({c.tier.replace('Member ', '')})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
           </div>
         </header>
       )}
@@ -1214,7 +1197,6 @@ export default function App() {
               notifications={notifications}
               onRedeemReward={handleRedeemReward}
               onSubmitReview={handleAddReview}
-              onSwitchToAdmin={() => setActiveView('web')}
               branding={currentTenant?.branding || {}}
             />
           </div>

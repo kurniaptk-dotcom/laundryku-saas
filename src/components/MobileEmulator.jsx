@@ -439,7 +439,6 @@ export default function MobileEmulator({
               {/* Menu List */}
               <div className="bg-white border border-slate-100 rounded-3xl shadow-soft divide-y divide-slate-100 overflow-hidden">
                 {[
-                  { title: '💻 Masuk ke Portal Admin & Kasir POS', desc: 'Akses dashboard ERP, antrean mesin, manajemen stok & payroll', icon: Monitor, isFeatured: true, action: () => onSwitchToAdmin?.() },
                   { title: 'Paket Langganan Kuota Kiloan', desc: 'Beli paket cuci 25-100 Kg hemat hingga 50%', icon: Package, action: () => setShowSubscriptionModal(true) },
                   { title: 'Toko Tukar Poin Hadiah', desc: 'Tukarkan poin dengan voucher cuci dan merchandise', icon: Gift, action: () => setShowRewardsModal(true) },
                   { title: 'Pemberitahuan & Notifikasi', desc: 'Lihat seluruh update pengerjaan laundry Anda', icon: Bell, action: () => setShowNotifModal(true) },

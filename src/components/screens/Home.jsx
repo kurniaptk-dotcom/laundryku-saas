@@ -159,18 +159,6 @@ export default function Home({
               </span>
             )}
           </button>
-
-          {/* Direct Switch to Admin Portal Button */}
-          {onSwitchToAdmin && (
-            <button
-              onClick={onSwitchToAdmin}
-              className="p-2.5 sm:px-3 sm:py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl transition-all shadow-clay-sm flex items-center gap-1.5 text-xs font-black"
-              title="Buka Portal Admin & Kasir POS"
-            >
-              <Monitor className="w-4 h-4 text-sky-400" />
-              <span className="hidden sm:inline">Admin</span>
-            </button>
-          )}
         </div>
       </div>
 
